@@ -55,3 +55,7 @@ COMMIT WORK;
 
 冲突的行级锁
 ![IMAGE](resources/038EA298B4BB12DF75CEAF8CD306FA0F.jpg =747x200)
+
+### drop truncate delete
+1. drop table, truncate table , 最简单直接
+2. DELETE ，版本被保留。所以需要delete+vacuum 。

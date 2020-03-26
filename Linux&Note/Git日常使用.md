@@ -67,6 +67,8 @@ git push origin :old-name new-name ：删除远程旧分支推送新分支
 git push origin branch:branch ：推送本地分支到远程
 git merge branch :合并分支到当前分支,合并分支时，加上 --no-ff 参数就可以用普通模式合并，合并后的历史有分支，能看出来曾经做过合并，而 fast forward 合并就看不出来曾经做过合并。
 git merge --squash another: 合并多个提交为一条
+git branch -m oldName  newName git push origin newName :重命名分支
+git push --delete origin oldName :删除远程分支
 ```
 
 **备份当前工作区内容**

@@ -205,3 +205,20 @@ user = User.first
 user_fake = YAML.dump(user)
 user_real = YAML.load(user_fake)
 ```
+
+
+## Ruby中require load autoload的区别
+require
+1. kernel method，可以加载 ruby 文件，也可以加载外部的库。
+2. 相比 load ,针对同一个文件，它只加载一次
+
+load
+1. 与 require 很类似，但是load会每次都重新加载文件。
+2. 大部分情况下，除非你加载的库变动频繁，需要重新加载以获取最新版本，一般建议用 require 来代替 load.
+
+autoload
+用法稍稍不同：autoload(const_name, 'file_path'), 其中 const_name 通常是模块名，或者类名。
+对于 load 和 require，在 ruby 运行到 require／load 时，会立马加载文件，而 autoload 则只有当你调用 module 或者 class 时才会加载文件。 Autoload will be dead, 不建议使用
+
+1. require并非线程安全
+2. 全局变量 类实例变量 类变量都应该是只读的，避免写操作

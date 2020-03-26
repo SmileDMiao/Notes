@@ -98,6 +98,22 @@ SELECT am.amname AS index_method,
     ORDER BY index_method, opclass_name;
 ```
 
+### 创建表Copy Structure from another table
+```sql
+-- 根据现有表创建新表
+-- including all
+create table tbl_inherits_partition (like tbl_inherits_parent including constraints including indexes including defaults);
+
+-- create table as select: define a new table from the results of a query
+create table tbl_inherits_partition as select * from tbl_inherits_parent;
+
+-- create table ... as table ... with {data|no data}: 创建一个和原表结构相同的新表，保留或不保留数据，但是不会继承原表的约束，索引等。
+create table tbl_inherits_partition as table tbl_inherits_parent with data;
+
+-- select * into new_table from table: 将结果集保存在新表中，但是只能执行一次。
+select * into tbl_inherits_partition from tbl_inherits_parent ;
+```
+
 ## 用到的函数和操作符
 ---
 + gen_random_uuid: PostgreSql自带的类型，函数支持需要安装模块pgcrypto，这个模块提供了好多关于加密的函数

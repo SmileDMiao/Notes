@@ -32,8 +32,35 @@ Client.where(created_at: (Time.now.midnight - 1.day)..Time.now.midnight)
 ```
 
 
-## LEFT OUTER JOIN
+## Query Method(preload, includes, left_outer_joins, )
 ```ruby
+# preload
+# select "users".* FROM "users"
+# select from articles where user_id = [] 
+User.preload(:articles)
+
+# includes
+# select "users".* FROM "users"
+# select from articles where user_id = []
+User.includes(:articles)
+User.includes(articles: [:comments])
+User.includes(:articles, :comments)
+
+# eager load
+# select users.*, articles.* from users left out join articles on user.id = articles.id
+User.eager_load(:articles)
+User.eager_load(articles: [:comments])
+
+# includes reference
+# includes + references 的效果类似于 eager_load， 但是他比 eager_load 更灵活
+# select users.*, articles.* from users left out join articles on user.id = articles.id
+User.includes(:articles).references(:articles)
+
+# joins
+# select comments.* from comments inner join users on users.id = comments.id inner join articles on articles.id = comments.article_id
+Comment.joins(:user, :article)
+
+# left outer joins
 Author.left_outer_joins(:posts).distinct.select('authors.*, COUNT(posts.*) AS posts_count').group('authors.id')
 ```
 

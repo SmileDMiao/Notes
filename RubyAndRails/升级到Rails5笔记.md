@@ -56,3 +56,25 @@ def set_uuid
   self.id = UUID.generate(:compact) unless self.class.name == 'ActiveRecord::SchemaMigration'
 end
 ```
+
+## redirect_to :back 弃用
+```ruby
+redirect_back(fallback_location:  request.headers['HTTP_REFERER'])
+```
+
+## manifest.js
+```ruby
+# app/assets/config/manifest.js
+//= link application.css
+//= link application.js
+```
+
+## Rails5.1 and 5.2 cache_store
+```ruby
+# 5.1
+# Gemfile
+gem 'redis-rails'
+config.cache_store = :redis_store, {url: 'redis://localhost:6379/1', expires_in: 120.minutes, dirver: :hiredis}
+# 5.2
+config.cache_store = :redis_cache_store, {url: 'redis://localhost:6379/1', expires_in: 120.minutes, dirver: :hiredis}
+```
