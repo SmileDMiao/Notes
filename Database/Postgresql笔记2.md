@@ -59,66 +59,141 @@ psql -U USERNAME DBNAME < dbexport.pgsql
 ```
 
 
-## FILLFACTOR
+
+
+## 窗口函数
 ---
-PostgreSQL每个表和索引的数据都是由很多个固定尺寸的页面存储  ,PostgreSQL中数据操作永远是Append操作,具体含义如下:
-+ insert 时向页中添加一条数据
-+ update 将历史数据标记为无效,然后向页中添加新数据
-+ delete 将历史数据标记为无效
-因为这个特性,所以需要定期对数据库vacuum,否则会导致数据库膨胀,建议打开autovacuum.
-ctid: (0,59)表示数据存放位置为第0个页面的第59行
+窗口函数提供在与当前查询行相关的行集合上执行计算的能力，必须使用窗口函数的语法调用这些窗口函数，一个OVER子句是必需的。
 ```sql
-select ctid , * from tablename;
+CREATE TABLE products (
+  id varchar(10),
+  name text,
+  price numeric,
+  uid varchar(14),
+  type varchar(100)
+);
+-- 按照价格排序
+-- row_number(): 在其分区重点当前行号，从1计
+select type, name, price, row_number() over(order by price asc) as idx from products;
+
+-- 在类别内按照价格排序
+select type, name, price, row_number() over(PARTITION by type order by price asc)  as idx from products;
+
+-- rank(): 在有间隔的当前排行，与它的第一个相同行的row_number相同(1134)
+-- 在上面的基础上，如果一个类别内价格相同那么idx一样
+select type, name, price, rank() over(PARTITION by type order by price) from products;
+
+-- dense_rank(): 没有间隔的当前行排名；这个函数计数对等组。(1123)
+select type, name, price, dense_rank() over(PARTITION by type order by price) from products;
+
+-- 窗口函数+聚合函数配合使用示例
+select 
+     id,type,name,price,
+     sum(price) over w1 类别金额合计,
+     (sum(price) over (order by type))/sum(price) over() 类别总额占所有品类商品百分比,
+     round(price/(sum(price) over w2),3) 子除类别百分比,
+     rank() over w3 排名,
+     sum(price) over() 金额总计
+from 
+     products 
+WINDOW 
+     w1 as (partition by type),
+     w2 as (partition by type rows between unbounded preceding and unbounded following),
+     w3 as (partition by type order by price desc)
+ ORDER BY 
+     type,price asc; 
 ```
-对一个表批量的插入数据，查询ctid，如果fillfactor设置为100，假设ctid这样分布: (0,99)(0,100)(1,1)(1,2)，就是指数据的存储将每页存满之后再往下一页存。那么如果将fillfactor设置为60，ctid会这样分布: (0,59)(0, 60)(1,1)(1,2)，存储数据的时候不会将每页都存满在往下一页存。那么在更新和删除的时候是怎样的，如果fillfactor设置为100，假设当前表存储的最新ctid是(22,100)，在更新(0,16)这条记录的时候会往当前表最新ctid后面添加那这里就是(23,1)，如果设置的fillfactor是60，那么在更新和删除的时候不会往最新的ctid后面添加数据，而是会往那40%没有填充数据的地方写入数据。
 
-+ autovacuum非常重要,必须要打开并设置合适的参数
-+ fillfactor会降低insert的性能,但是update和delete性能将有提升
-
-## VACUUM AND AUTOVACUUM
+## 递归查询
 ---
-VACUUM回收死行占据的存储空间，那些已经DELETE的行或者被UPDATE过后过时的行并没有从它们所属的表中物理删除
 ```sql
--- vacuum不能在事物里执行
-vacuum(
-full: 完全清理，会锁表也会占用更多的空间
-verbose: 打印清理报告
-analyze: 更新用于优化器的统计信息，以决定执行查询的最有效方法。
-) tablename;
+create table area(
+  id int,
+  name varchar(32),
+  parent_id int
+);
+insert into area values (1, '中国'   ,0);
+insert into area values (2, '江苏省'   ,1);
+insert into area values (3, '湖南省'   ,1);
+insert into area values (4, '盐城市'   ,2);
+insert into area values (5, '苏州市'   ,2);
+insert into area values (6, '长沙市'   ,3);
+insert into area values (7, '射阳县' ,4);
+insert into area values (8, '建湖县' ,4);
 
--- 查看每个表的vacuum时间
-select relname,last_vacuum, last_autovacuum, last_analyze, last_autoanalyze from pg_stat_user_tables;
+-- RECURSIVE: 递归查询关键字
+-- T: 申明的虚拟表，每次递归一层后都会将本层数据写入T中
+-- T()里面可以定义参数，个数要与后面的查询参数一致，select * 就不写了
+-- union all: 用于合并查询结果
+-- area.parent_id = T.id: 取虚拟表的ID和实体表parent_id连，这个条件决定了当前递归查询的查询方式(向上查询还是向下查询)
+-- 查询江苏省下面的所有结果(向下查找)
+WITH RECURSIVE T AS (
+       SELECT * FROM area WHERE id = 2
+     union ALL 
+       SELECT area.* FROM area, T WHERE area.parent_id = T.id 
+     ) 
+SELECT * FROM T ORDER BY id;
+-- 向上查找
+WITH RECURSIVE T AS (
+       SELECT * FROM area WHERE id = 7
+     union ALL 
+       SELECT area.* FROM area, T WHERE area.id = T.parent_id
+     ) 
+SELECT * FROM T ORDER BY id;
 ```
 
-AUTOVACUUM:
-```shell
-# 配置在postgresql.conf中
-# AUTOVACUUM PARAMETERS
-autovacuum：是否启动系统自动清理功能，默认值为on。
-autovacuum_max_workers：设置系统自动清理工作进程的最大数量
-autovacuum_naptime：设置两次系统自动清理操作之间的间隔时间。
-log_autovacuum_min_duration = -1: -1禁用对自动清理动作的记录，0记录所有的自动清理动作
+## 生成测试数据
+---
+```sql
+-- 准备测试数据
+create table test( 
+  id int8,  
+  c1 int8 default 0,  
+  c2 int8 default 0,  
+  c3 int8 default 0,  
+  c4 float8 default 0,  
+  c5 text default 'hello world postgresql',  
+  ts timestamp default clock_timestamp()  
+)
+insert into articles select id, substring(md5(random()::text),1,8), md5(random()::text), 0, null, null, 0, '{}', '{}', clock_timestamp(), clock_timestamp() from generate_series(1, 10) id;
 
-autovacuum_vacuum_threshold 和 autovacuum_analyze_threshold ：设置当表上被更新的元组数的阈值超过这些阈值时分别需要执行vacuum和analyze。
-autovacuum_vacuum_scale_factor设置表大小的缩放系数。
-autovacuum_freeze_max_age：设置需要强制对数据库进行清理的XID上限值。
-autovacuum_vacuum_scale_factor = 0.2
-autovacuum_analyze_scale_factor = 0.1
+-- 可以通过这种方式生成一个随机字符串 
+substring(md5(random()::text),1,8)
+
+-- 生成随机的中文
+create or replace function gen_hanzi(int) returns text as $$  
+declare  
+  res text;  
+begin  
+  if $1 >=1 then  
+    select string_agg(chr(19968+(random()*20901)::int), '') into res from generate_series(1,$1);  
+    return res;  
+  end if;  
+  return null;  
+end;  
+$$ language plpgsql strict;
+
+select gen_hanzi(10) from generate_series(1,10);
+
+-- 随机数组
+create or replace function gen_rand_arr(int,int) returns int[] as $$    
+  select array_agg((random()*$1)::int) from generate_series(1,$2);    
+$$ language sql strict;
+select gen_rand_arr(100,50)
 ```
+
+## UNLOGGED TABLE
+> 不会写入XLOG的表
 
 ```sql
--- 触发条件: pg_stat_all_tables.n_dead_tup >= threshold + pg_class.reltuples * scale_factor
-SELECT nspname AS schemaname, 
-         relname as tablename, 
-         reltuples
-    FROM pg_class C 
-         LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-   WHERE nspname NOT IN ('pg_catalog', 'information_schema') AND relkind='r'
-ORDER BY reltuples DESC;
+-- 创建unlogged table
+CREATE UNLOGGED TABLE name ();
+-- 改为unlogged table
+ALTER TABLE name SET UNLOGGED;
 
-select relname, 
-       n_dead_tup, 
-       n_live_tup 
-  from pg_stat_all_tables 
- where schemaname !~ 'pg_';
+-- list unlogged table in current db
+SELECT relname FROM pg_class WHERE relpersistence = 'u';
 ```
+
+## XLOG AND WAL
+> WAL(Write-Ahead Logging)就是写在前面的日志,是事物和数据库故障的一个保护。任何试图修改数据库数据的操作都会写一份日志到磁盘。这个日志在PG中叫XLOG。所有的日志都会写在$PGDATA/pg_wal目录下面。

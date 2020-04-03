@@ -219,3 +219,6 @@ load
 autoload
 用法稍稍不同：autoload(const_name, 'file_path'), 其中 const_name 通常是模块名，或者类名。
 对于 load 和 require，在 ruby 运行到 require／load 时，会立马加载文件，而 autoload 则只有当你调用 module 或者 class 时才会加载文件。 Autoload will be dead, 不建议使用
+
+1. require并非线程安全
+2. 全局变量 类实例变量 类变量都应该是只读的，避免写操作

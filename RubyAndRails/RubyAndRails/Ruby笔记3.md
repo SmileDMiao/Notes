@@ -96,7 +96,7 @@ end
 ## Ruby线程安全
 ---
 Mutex:互斥锁
->线程要访问一段代码前，先获得一把锁，其他的线程就不能在锁被释放前访问这段代码，只能等锁释放了，其他线程才能进来。rails之所以是线程安全的原因就在于使用了这种机制，每个请求(action)，最终就是会进入这样一个互斥锁的控制。
+>线程要访问一段代码前，先获得一把锁，其他的线程就不能在锁被释放前访问这段代码，只能等锁释放了，其他线程才能进来。Rails之所以是线程安全的原因就在于使用了这种机制，每个请求(action)，最终就是会进入这样一个互斥锁的控制。
 
 线程安全的数据类型:Queue
 ```ruby
@@ -200,19 +200,32 @@ Developer.new.name #=> 'Johnnie Walker'
 ```
 
 
-## Block, Proc 和 Lambda 的区别
+## Block Proc 和 Lambda 的区别
+```ruby
+# lambda
+# 创建方式等同
+lambda {|x| x + 1}
+->(x) {x + 1}
+
+# proc
+Proc.new{|x| x + 1}
+```
 1. Proc 和 Lambda 都是对象，而 Block 不是
 2. 参数列表中最多只能有一个 Block，但是可以有多个 Proc 或 Lambda
 3. Lambda 对参数的检查很严格，而 Proc 则比较宽松
 4. Proc 和 Lambda 中return关键字的行为是不同的, lambda中，return表示从这个lambda中返回，proc中表示从定义这个proc的作用域返回。
+5. 用lambda创建的proc称为lambda,其他方式创建的称为proc,可以通过Proc#lambda?方式判断
+
 ```ruby
 def f1
   yield
 end
+
 # 注意&p 不是参数，&p 类似于一种声明，当方法后面有 block 时，会将 block 捕捉起来存放到变量 p 中，如果方法后面没有 block，那么&p 什么也不干
 def f2(&p)
   p.call
 end
+
 def f3(p)
   p.call
 end
@@ -222,9 +235,17 @@ f2 { puts "f2" }
 f3(proc{ puts "f3"})
 f3(Proc.new{puts "f3"})
 f3(lambda{puts "f3"})
+```
 
-
-
-
+&操作符: 这是一个proc对象我想当成代码块使用
+```ruby
+# Symbol#to_proc
 [1,2,3].map(&:to_i)
 ```
+
+
+## 语法问题
+each: 循环遍历, 返回原数组
+map: 循环遍历, 将处理结果打包新数组返回
+ruby类:
+单件方法，单件类
