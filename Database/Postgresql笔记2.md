@@ -58,9 +58,6 @@ pg_dump -U USERNAME DBNAME > dbexport.pgsql
 psql -U USERNAME DBNAME < dbexport.pgsql
 ```
 
-
-
-
 ## 窗口函数
 ---
 窗口函数提供在与当前查询行相关的行集合上执行计算的能力，必须使用窗口函数的语法调用这些窗口函数，一个OVER子句是必需的。

@@ -45,6 +45,7 @@ User.preload(:articles)
 User.includes(:articles)
 User.includes(articles: [:comments])
 User.includes(:articles, :comments)
+User.includes(:articles, :comments).where(comments: {user_id: User-ID})
 
 # eager load
 # select users.*, articles.* from users left out join articles on user.id = articles.id
@@ -75,5 +76,3 @@ Client.exists?(name: ['John', 'Sergei'])
 ```ruby
 User.where(status: 1).explain
 ```
-
-## 查询除ID外重复的记录

@@ -192,3 +192,39 @@ time.to_formatted_s(:long_ordinal)
 time.to_formatted_s(:rfc822) # GMT
 => "Mon, 18 Jul 2016 02:58:22 +0800"
 ```
+
+## Rails ActiveRecord autosave association
+遇到一个一对多模型关系同时保存的问题，发现子项更改后保存失败。后面才知道是autosave的作用。
+我在update!方法里没找到头绪, 其实**auto_save: true**是为模型添加了回调方法实现association model 保存的
+```ruby
+def add_autosave_association_callbacks(reflection)
+  save_method = :"autosave_associated_records_for_#{reflection.name}"
+
+  if reflection.collection?
+    before_save :before_save_collection_association
+    after_save :after_save_collection_association
+
+    define_non_cyclic_method(save_method) { save_collection_association(reflection) }
+    # Doesn't use after_save as that would save associations added in after_create/after_update twice
+    after_create save_method
+    after_update save_method
+  elsif reflection.has_one?
+    define_method(save_method) { save_has_one_association(reflection) } unless method_defined?(save_method)
+    # Configures two callbacks instead of a single after_save so that
+    # the model may rely on their execution order relative to its
+    # own callbacks.
+    #
+    # For example, given that after_creates run before after_saves, if
+    # we configured instead an after_save there would be no way to fire
+    # a custom after_create callback after the child association gets
+    # created.
+    after_create save_method
+    after_update save_method
+  else
+    define_non_cyclic_method(save_method) { throw(:abort) if save_belongs_to_association(reflection) == false }
+    before_save save_method
+  end
+  
+  define_autosave_validation_callbacks(reflection)
+end
+```

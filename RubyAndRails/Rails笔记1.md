@@ -189,3 +189,18 @@ end
 ## Rake Task 方法重复的问题
 项目中有两个task，task1定义了方法hello, task2中也定义了方法hello，我在task1中调用方法hello的时候，实际上调用的却是task2中的hello方法，后面我定义了uniq method name解决了这个问题。还有就是我在task里面调用find_in_batches这个方法的时候，却报错了，报错报到另一个task里面去了，原来find_in_batches里面有调用logger这个方法，但是另外的一个task里面已经定义了这个方法。
 原因: 在运行Rake任务的时候，不管你运行哪一个任务Rake都会加载所有的task，这也是不区分命名空间的，那么先加载rails环境，再加载task代码，所以后面加载的会覆盖前面加载的，所以会出现上面遇到的这么个情况。
+
+## Rails prject specify .pryrc
+---
+我在新项目中发现项目根目录下有个文件叫做 **.pryrc** 经过了解才知道这是 **pry** 支持到项目指定文, 我们可以在这个文件里添加些代码以方便我们在每一个console session里都可以获取到相应的信息。
+```ruby
+# pryrc
+def user
+  @user ||= User.first
+end
+
+def admin
+  @admin ||=  Admin.first
+end
+```
+在新开的console里面可以直接获取到 **user admin**

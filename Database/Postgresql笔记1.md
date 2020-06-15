@@ -8,6 +8,9 @@ createdb
 -- 我本地执行sql不显示执行时间，这个是个开关
 \timing
 
+-- 给用户添加权限
+ALTER USER postgres CREATEDB;
+
 -- 查看所有数据库
 psql -l
 \l
@@ -42,8 +45,9 @@ show data_directory
 ## PostgreSQL SQL
 ---
 ```sql
--- 添加列
+-- 添加删除列
 ALTER TABLE old_metrics ADD used character varying;
+ALTER TABLE table_name drop column column_name;
 
 -- 清空表
 TRUNCATE projects;
@@ -76,6 +80,7 @@ select pg_encoding_to_char(collencoding) as encoding, collname, collcollate, col
 CREATE INDEX INDEX_NAME ON TABLE_NAME USING GIN(COLUMN_NAME, PATTERN)
 -- 支持在线创建索引，不堵塞其他会话
 CREATE INDEX CONCURRENTLY
+CREATE INDEX ... WHERE: 只为过滤后的数据加索引
 
 -- 查看索引大小
 select pg_size_pretty(pg_relation_size('index_name'));
