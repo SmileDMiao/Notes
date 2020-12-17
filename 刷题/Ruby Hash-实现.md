@@ -1,5 +1,5 @@
 ```ruby
-# 版本1
+# 版本1 数组
 class TurboHash
   attr_reader :table
 
@@ -87,7 +87,7 @@ class TurboHash
   end
 end
 
-# 版本3
+# 版本3 哈希值链表扩容
 class Node
   attr_reader :object, :next
 
@@ -150,4 +150,10 @@ class TurboHash
   end
 end
 ```
+
+开放地址法:
+不再额外维护一个链表结构，每次都是按 hash 索引在数组插入，如果要插入的位置已经有元素存在，那么就找到一个空的位置插入。
+【线性探测 随机探测】
+
+
 

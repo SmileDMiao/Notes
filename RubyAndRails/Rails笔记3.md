@@ -1,4 +1,5 @@
 ## GROUP AND HAVING USAGE
+---
 >having是分组（group by）后的筛选条件，分组后的数据组内再筛选
 where则是在分组前筛选
 
@@ -17,6 +18,7 @@ having count(user_id) > 20
 ```
 
 ## GROUP AND COUNT
+---
 ```ruby
 Order.group(:status, :name).count
 ```
@@ -26,13 +28,22 @@ FROM "orders"
 GROUP BY status
 ```
 
+## GROUP AND SUM
+---
+```ruby
+# sum多个字段 返回一个数组
+all_data.group('mini_game_results.mini_game_id').pluck('mini_game_id, sum(mini_game_results.spent), sum(mini_game_results.repay)')
+```
+
 ## Range Conditions
+---
 ```ruby
 Client.where(created_at: (Time.now.midnight - 1.day)..Time.now.midnight)
 ```
 
 
-## Query Method(preload, includes, left_outer_joins, )
+## Query Method(preload, includes, left_outer_joins, eager_load)
+---
 ```ruby
 # preload
 # select "users".* FROM "users"
@@ -66,6 +77,7 @@ Author.left_outer_joins(:posts).distinct.select('authors.*, COUNT(posts.*) AS po
 ```
 
 ## EXISTS?
+---
 ```ruby
 Client.exists?(1)
 Client.exists?(id: [1,2,3])
@@ -73,6 +85,7 @@ Client.exists?(name: ['John', 'Sergei'])
 ```
 
 ## EXPLAIN
+---
 ```ruby
 User.where(status: 1).explain
 ```

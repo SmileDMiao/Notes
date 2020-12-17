@@ -148,11 +148,3 @@ kill -s USR2 pid
 ## 内存占用过高
 [puma_worker_killer](https://github.com/schneems/puma_worker_killer)
 [unicorn_worker_killer](https://github.com/kzk/unicorn-worker-killer)
-
-
-## 参考
-[Ruby on Rails 部署方案 Nginx + Mina + Puma](https://ruby-china.org/topics/26132)
-
-[部署之使用 mina 来部署 Ruby on Rails 应用之基础 (七)](https://www.rails365.net/articles/2015-09-21-bu-shu-zhi-shi-yong-mina-lai-bu-shu-ruby-on-rails-ying-yong-zhi-ji-chu-qi)
-
-[用nginx+Puma+Mina部署Rails应用程序](https://github.com/chinakr/programmer-notes/blob/master/ror/rails/rails-deploy-nginx-puma-mina.md)

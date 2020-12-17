@@ -158,41 +158,6 @@ config.log_tags = [:request_id]
 ```
 
 ---
-## 字符串转时间:
-20120514144424 转成 2012-05-14 14:44:24
-```ruby
-DateTime.parse('20120514144424').strftime('%Y-%m-%d %H:%M:%S')
-=> "2012-05-14 14:44:24"
-"20120514144424".to_time.strftime('%Y-%m-%d %H:%M:%S')
-=> "2012-05-14 14:44:24"
-"20120514144424".to_datetime.strftime('%Y-%m-%d %H:%M:%S')
-=> "2012-05-14 14:44:24"
-"20120514144424".to_date
-=> Mon, 14 May 2012
-# Timestamp类型转换
-DateTime.strptime('253402185600000','%Q').to_time
-```
-
-## 时间对象的显示转换
-```ruby
-time = Time.now
-=> 2016-07-18 02:58:22 +0800
-time.to_formatted_s(:time)
-=> "02:58"
-time.to_formatted_s(:db)
-=> "2016-07-18 02:58:22"
-time.to_formatted_s(:number)
-=> "20160718025822"
-time.to_formatted_s(:short)
-=> "18 Jul 02:58"
-time.to_formatted_s(:long)
-=> "July 18, 2016 02:58"
-time.to_formatted_s(:long_ordinal)
-=> "July 18th, 2016 02:58"
-time.to_formatted_s(:rfc822) # GMT
-=> "Mon, 18 Jul 2016 02:58:22 +0800"
-```
-
 ## Rails ActiveRecord autosave association
 遇到一个一对多模型关系同时保存的问题，发现子项更改后保存失败。后面才知道是autosave的作用。
 我在update!方法里没找到头绪, 其实**auto_save: true**是为模型添加了回调方法实现association model 保存的
@@ -228,3 +193,9 @@ def add_autosave_association_callbacks(reflection)
   define_autosave_validation_callbacks(reflection)
 end
 ```
+
+---
+## Rails5 ar_internal_metadata
+> 阻止Rake指令意外清空线上数据库
+
+简而言之就是第一次migration会把当前环境写入DB, 后面运行Rake Task的时候会检查环境变量, 如果包含production则会抛出异常

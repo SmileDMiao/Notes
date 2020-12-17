@@ -110,16 +110,24 @@ gem 'migration_comments'
 rails5 框架自带
 对应sql:
 ```sql
-create table test( 
-    id int not null default 0 comment '用户id' ) ;
-alter table test 
-change column id id int not null default 0 comment '测试表id';
-show full columns from test;
-create table test1 ( 
-    field_name int comment '字段的注释' 
-)comment='表的注释';
-alter table test1 modify column field_name int comment '修改后的字段注释'; 
-show  create  table  test1;
+CREATE TABLE test (
+	id int NOT NULL DEFAULT 0 COMMENT '用户id'
+);
+
+ALTER TABLE test change COLUMN id id int NOT NULL DEFAULT 0 COMMENT '测试表id';
+
+SHOW
+	FULL columns
+FROM
+	test;
+
+CREATE TABLE test1 (
+	field_name int COMMENT '字段的注释')
+COMMENT = '表的注释';
+
+ALTER TABLE test1 modify COLUMN field_name int COMMENT '修改后的字段注释';
+
+SHOW CREATE TABLE test1;
 ```
 
 ---

@@ -7,6 +7,7 @@ git config --global core.editor "vim"
 git config log.date iso-local
 ```
 
+---
 ## 工作区和缓存区
 就是你在电脑里能看到的目录，比如这里的GitHub文件夹就是一个工作区。
 ![IMAGE](resources/24497EAA269E6429B31ACC3F0A307391.jpg =546x258)
@@ -17,6 +18,7 @@ Git 的版本库里存了很多东西，其中最重要的就是称为 stage（�
 第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
 因为我们创建 Git 版本库时，Git 自动为我们创建了唯一一个 master 分支，所以，现在，git commit就是往 master 分支上提交更改。
 
+---
 ## Git基本命令
 **初始化，添加，提交，推送**
 ```shell
@@ -37,6 +39,7 @@ git pull origin branch :同步某分支代码
 git log :可以查看从最近到最远的提交日志。
 git log --pretty=oneline :(查看简略一点)
 git log --graph :命令可以看到分支合并图
+git log -p file-path: 查看一个文件的改动历史
 ```
 
 **版本回退**
@@ -69,6 +72,11 @@ git merge branch :合并分支到当前分支,合并分支时，加上 --no-ff �
 git merge --squash another: 合并多个提交为一条
 git branch -m oldName  newName git push origin newName :重命名分支
 git push --delete origin oldName :删除远程分支
+
+# 会把已合并的，在2019-08-01 后就没有更新的远程分支删掉
+git branch -r --sort committerdate --format '%(committerdate:short) %(refname:lstrip=3)' --merged | awk -v start="2019-08-01" '$1<start {print $2}' | xargs -n20 git push -d origin
+
+git branch |grep "miao" | xargs git branch -D :删除名字包含 miao 的分支
 ```
 
 **备份当前工作区内容**
@@ -155,27 +163,22 @@ git push origin <tagname> :推送某个标签到远程
 要看看是否真的从远程库删除了标签，可以登陆 GitHub 查看
 ```
 
+---
 ## 忽略文件
 不想将某个文件加入版本控制中，可以在项目根目录下新建一个名为 .gitignore 的文件
-文件内容有个参考[gitignore](https://github.com/github/gitignore)
 
+---
 ## github设置项目语言
 rails项目自然最好被github识别weiruby项目，但是若html和css过多则会被识别html
 ```shell
 # gitattributes设置项目语言
 *.html linguist-language=JavaScript
 ```
-PR reviewer comment: LGTM: look good to me
 
-## git warning:  CRLF will be replaced by LF in xxx
-原因分析：
-CRLF -- Carriage-Return Line-Feed 回车换行
-就是回车(CR, ASCII 13, \r) 换行(LF, ASCII 10, \n)。
-这两个ACSII字符不会在屏幕有任何输出，但在Windows中广泛使用来标识一行的结束。而在Linux/UNIX系统中只有换行符。
-也就是说在windows中的换行符为 CRLF， 而在linux下的换行符为：LF
-
-## mac:error: There was a problem with the editor 'vi'
+---
+## Git配置
 ```shell
+# 默认 editor
 git config --global core.editor /usr/bin/vim
 ```
 ## Git ignore文件中添加了某文件，但是 git status 还是出现了改文件
@@ -184,6 +187,7 @@ git rm --cached file
 git commit
 ```
 
+---
 ## Git Submodule
 ```shell
 git submodule add submodule_url
@@ -191,6 +195,7 @@ git submodule init
 git submodule update
 ```
 
-## 工具推介
-[tig](https://github.com/jonas/tig)
-[git-extras](https://github.com/tj/git-extras)
+---
+## 相关工具
+1. tig
+2. git-extras

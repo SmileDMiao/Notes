@@ -21,43 +21,6 @@ RU隔离级别不允许脏读，实际上和Read committed一样, RR隔离级别
 
 ![IMAGE](resources/C01DF053CB0C28A34B9F14B5BA8F2A54.jpg =793x171)
 
-## Postgresql显示锁定
----
-#### 表级锁
-两种锁模式之间真正的区别是它们有着不同的冲突锁集合，两个事务在同一时刻不能在同一个表上持有相互冲突的锁。不过，一个事务决不会和自身冲突。
-```sql
-BEGIN WORK;
-LOCK TABLE films IN SHARE MODE;
-SELECT id FROM films
-    WHERE name = 'Star Wars: Episode I - The Phantom Menace';
--- 如果记录没有被返回就做 ROLLBACK
-INSERT INTO films_user_comments VALUES
-    (_id_, 'GREAT! I was waiting for it for so long!');
-COMMIT WORK;
-```
-1. ACCESS SHARE
-2. ROW SHARE
-3. ROW EXCLUSIVE
-4. SHARE UPDATE EXCLUSIVE
-5. SHARE
-6. SHARE ROW EXCLUSIVE
-7. EXCLUSIVE
-8. ACCESS EXCLUSIVE
-
-冲突的锁模式
-![IMAGE](resources/7268ABD1F570F53C7985BE5ADD048EFE.jpg =1416x316)
-
-#### 行级锁
-一个事务可能会在相同的行上保持冲突的锁，甚至是在不同的子事务中。但是除此之外，两个事务永远不可能在相同的行上持有冲突的锁。行级锁不影响数据查询，它们只阻塞对同一行的写入者和加锁者。
-1. FOR UPDATE
-2. FOR NO KEY UPDATE
-3. FOR SHARE
-4. FOR KEY SHARE
-
-冲突的行级锁
-![IMAGE](resources/038EA298B4BB12DF75CEAF8CD306FA0F.jpg =747x200)
-
-
 ## FILLFACTOR
 ---
 PostgreSQL每个表和索引的数据都是由很多个固定尺寸的页面存储  ,PostgreSQL中数据操作永远是Append操作,具体含义如下:
@@ -70,6 +33,14 @@ ctid: (0,59)表示数据存放位置为第0个页面的第59行
 select ctid , * from tablename;
 ```
 对一个表批量的插入数据，查询ctid，如果fillfactor设置为100，假设ctid这样分布: (0,99)(0,100)(1,1)(1,2)，就是指数据的存储将每页存满之后再往下一页存。那么如果将fillfactor设置为60，ctid会这样分布: (0,59)(0, 60)(1,1)(1,2)，存储数据的时候不会将每页都存满在往下一页存。那么在更新和删除的时候是怎样的，如果fillfactor设置为100，假设当前表存储的最新ctid是(22,100)，在更新(0,16)这条记录的时候会往当前表最新ctid后面添加那这里就是(23,1)，如果设置的fillfactor是60，那么在更新和删除的时候不会往最新的ctid后面添加数据，而是会往那40%没有填充数据的地方写入数据。
+```sql
+-- 创建表时设置fillfactorc
+reate table table_name()with (fillfactor=100);
+
+-- 更新fillfactor
+ALTER TABLE table_name SET ( fillfactor = 50);
+VACUUM FULL table_name;
+```
 
 + autovacuum非常重要,必须要打开并设置合适的参数
 + fillfactor会降低insert的性能,但是update和delete性能将有提升

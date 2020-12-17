@@ -58,9 +58,11 @@ pgbench中工作线程的数量。在多CPU的机器上使用多个线程会很�
 -- statement has too many arguments (maximum is 9)
 \set indicator1 random(1,1000)
 insert into stocks000001 values (now(),:indicator1,456,8,4,9,443,380,:52,49,772);
+```
 
-
+```shell
 pgbench -M prepared -n -r -P 1 -f ./pg_test1.sql blog
+pgbench -M prepared -n -c 16 -j 8 -r -P 5  -T 60 -f scratch.sql dongapp_development;
 ```
 
 TPS: 这三个过程，每秒能够完成N个这三个过程

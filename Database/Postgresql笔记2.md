@@ -21,6 +21,16 @@ WITH CSV;
 COPY products
 FROM '/path/to/input.csv'
 WITH CSV (HEADER);
+
+-- PG::InsufficientPrivilege: ERROR: must be superuser or a member of the pg_write_server_files role to COPY to a file
+-- 有时候会遇到这种权限问题
+GRANT pg_read_server_files TO themadeknight;
+```
+## 多进程COPY
+---
+[timescaledb-parallel-copy](https://github.com/timescale/timescaledb-parallel-copy)
+```shell
+timescaledb-parallel-copy --db-name postgres --table test --file ./ii.csv --workers 8 --reporting-period 30s -connection "host=localhost user=postgres password=helloworld sslmode=disable" -truncate -batch-size 100000
 ```
 
 ## Postgresql树形结构插件ltree
@@ -180,7 +190,8 @@ select gen_rand_arr(100,50)
 ```
 
 ## UNLOGGED TABLE
-> 不会写入XLOG的表
+---
+不会写入XLOG的表
 
 ```sql
 -- 创建unlogged table
@@ -193,4 +204,20 @@ SELECT relname FROM pg_class WHERE relpersistence = 'u';
 ```
 
 ## XLOG AND WAL
-> WAL(Write-Ahead Logging)就是写在前面的日志,是事物和数据库故障的一个保护。任何试图修改数据库数据的操作都会写一份日志到磁盘。这个日志在PG中叫XLOG。所有的日志都会写在$PGDATA/pg_wal目录下面。
+---
+WAL(Write-Ahead Logging)就是写在前面的日志,是事物和数据库故障的一个保护。任何试图修改数据库数据的操作都会写一份日志到磁盘。这个日志在PG中叫XLOG。所有的日志都会写在$PGDATA/pg_wal目录下面。
+
+## PARALLER QUERY
+---
+```sql
+-- setup
+create table test(id int4 primary key, create_time timestamp without time zone default clock_timestamp(), name character varying(32));
+insert into test(id,name) select n,n*random()*10000  from generate_series(1,10000000) n; 
+
+-- enable 
+show max_parallel_workers_per_gather;
+set max_parallel_workers_per_gather to 4;
+
+-- explain
+explain analyze select count(*)  from test_big1 where id <1000000;
+```

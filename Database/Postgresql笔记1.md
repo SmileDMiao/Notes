@@ -8,8 +8,8 @@ createdb
 -- 我本地执行sql不显示执行时间，这个是个开关
 \timing
 
--- 给用户添加权限
-ALTER USER postgres CREATEDB;
+-- 查看当前时区信息
+show timezone
 
 -- 查看所有数据库
 psql -l
@@ -45,9 +45,33 @@ show data_directory
 ## PostgreSQL SQL
 ---
 ```sql
+-- 给用户添加权限
+CREATE USER postgres SUPERUSER;
+ALTER USER postgres CREATEDB;
+ALTER DATABASE postgres OWNER TO postgres;
+ALTER ROLE themadeknight WITH CREATEDB;
+
 -- 添加删除列
 ALTER TABLE old_metrics ADD used character varying;
 ALTER TABLE table_name drop column column_name;
+
+-- 设置改变 NOT NULL
+ALTER TABLE table_nae ALTER column drop not null;
+ALTER TABLE table_nae ALTER column set not null;
+
+-- 添加删除外建约束
+ALTER TABLE OPTIONS DROP CONSTRAINT constranint_name;
+ALTER TABLE OPTIONS ADD FOREIGN KEY(topic_id) REFERENCES TOPICS(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+-- 改变类型
+ALTER TABLE users ALTER COLUMN username TYPE citext;
+ALTER TABLE users ALTER COLUMN username type citext USING username::bigint;
+ALTER TABLE topics ALTER COLUMN switch DROP DEFAULT;
+ALTER TABLE topics ALTER switch TYPE bool USING CASE WHEN switch=0 THEN FALSE ELSE TRUE END;
+ALTER TABLE topics ALTER COLUMN switch SET DEFAULT true;
+
+-- sleep
+SELECT * from pg_sleep(5);
 
 -- 清空表
 TRUNCATE projects;
@@ -108,7 +132,8 @@ SELECT am.amname AS index_method,
     WHERE opc.opcmethod = am.oid
     ORDER BY index_method, opclass_name;
     
-    
+-- 查看所有的参数设置
+show all;
 -- bitmap scan on or off   
 set enable_bitmapscan=off;
 
@@ -146,10 +171,54 @@ select * into tbl_inherits_partition from tbl_inherits_parent ;
 
 #### POSIX正则表达式
 ---
-+ ~: 表示查询关键字左边的字段匹配右边表达式的记录
-+ ~*: 表示查询关键字左边的字段匹配右边表达式的记录，并且不区分大小写
-+ !~: 表示查询关键字左边的字段不匹配右边表达式的记录
-+ !~*: 表示查询关键字左边的字段不匹配右边表达式的记录，并且不区分大小写
+1
+| 操作符 | 描述 | 例子 |
+| :-----| :---- | :----: |
+| ~ | 表示查询关键字左边的字段匹配右边表达式的记录,大小写敏感 | 'thomas' ~ '.*thomas.*' |
+| ~* | 表示查询关键字左边的字段匹配右边表达式的记录,并且不区分大小写 | 'thomas' ~* '.*Thomas.*' |
+| !~ | 表示查询关键字左边的字段匹配右边表达式的记录,大小写敏感 | 'thomas' !~ '.*Thomas.*' |
+| !~* | 表示查询关键字左边的字段不匹配右边表达式的记录,并且不区分大小写 | 'thomas' !~* '.*Thomas.*' |
+
+2
+| 分隔符 | 描述 |
+| :-----| :---- | 
+| ? | 一个匹配 0 或者更多个原子的序列. ab?c matches only ac or abc |
+| + | 一个匹配 1 或者更多个原子的序列. ab+c matches abc, abbc, abbbc, and so on, but not ac |
+| \| |	 abc\|def matches abc or def |
+
+3
+| 例子 | 描述 |
+| :-----| :---- |
+| [hc]?at | matches "at", "hat", and "cat" |
+| [hc]*at | matches "at", "hat", "cat", "hhat", "chat", "hcat", "cchchat" |
+| [hc]+at | matches "hat", "cat", "hhat", "chat", "hcat", "cchchat", and so on, but not "at" |
+| cat|dog | matches "cat" or "dog" |
+
+4
+| 分隔符 | 描述 |
+| :-----| :---- | 
+| ^ |	匹配字符串中的起始位置 |
+| . |	匹配任何单个字符. a.c matches "abc", etc., but [a.c] matches only "a", ".", or "c". |
+| [] | 括号表达式。匹配方括号中包含的单个字符. [abc] matches "a", "b", or "c". [abcx-z] matches "a", "b", "c", "x", "y", or "z", 等同 [a-cx-z] |
+|[^] | 匹配不包含在方括号内的单个字符. [^abc] 匹配除 "a", "b", or "c" 之外的任何字符. 文字字符和范围也可以混合使用 |
+| $ | 匹配字符串的结束位置或字符串结束换行符之前的位置 |
+| () | 定义标记的子表达式 |
+| \n | 匹配第n个标记的子表达式匹配的内容，其中n是从1到9的数字 |
+| * | 与前面的元素匹配零次或多次. ab*c matches "ac", "abc", "abbbc". [xyz]* matches "", "x", "y", "z", "zx", "zyx", "xyzzy". (ab)* matches "", "ab", "abab", "ababab" |
+| {m,n} | 与前面的元素匹配至少m次，但不超过n次. a{3,5} matches only "aaa", "aaaa", and "aaaaa". |
+
+5
+| 例子 | 描述 |
+| :-----| :---- | 
+| .at | 匹配以 at 结尾, including "hat", "cat", and "bat". |
+| [hc]at | 匹配 "hat" and "cat". |
+| [^b]at | 匹配 任何匹配 .at 除了 "bat". |
+| [^hc]at | 匹配 任何匹配 .at 除了 "hat" and "cat". |
+| ^[hc]at | 匹配 "hat" and "cat", 但只有是开头或者新行 |
+| [hc]at$ | 匹配 "hat" and "cat", 但只有结尾或新行 |
+| \\[.\\] | 匹配被[] 包含的字符串. "[a]" and "[b]". |
+| s.* | 匹配零个或多个字符跟在后面. "s" and "saw" and "seed". |
+
 ```sql
 -- User.where("name ~* ?", 'ruby')
 select * from articles where title ~* 'ruby';
@@ -157,7 +226,9 @@ select * from articles where title ~* 'ruby';
 
 #### LIKE操作符
 ---
-+ ~~: LIKE
-+ ~~*: ILIKE
-+ !~~: NOT LIKE
-+ !~~*: NOT ILIKE
+| 操作符 | SQL | 
+| :-----| :---- | 
+| ~~ | LIKE | 
+| ~~*: | ILIKE |
+| !~~ | NOT LIKE |
+| !~~* | NOT ILIKE |

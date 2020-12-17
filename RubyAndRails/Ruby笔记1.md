@@ -279,42 +279,6 @@ person.tap do |p|
 end
 ```
 
-
-## Ruby 中的回调
-### Method相关
-+ respond_to_missing?: 当尝试查看一个missing的方法时执行。
-+ method_missing: 当调用一个不存在的方法时执行。
-+ method_added: 当定义一个方法时执行
-+ method_removed: 当一个方法被移除时执行
-+ singleton_method_added: 当添加一个singleton方法时执行。
-+ singleton_method_removed: 当一个singleton方法被移除时执行。
-+ method_undefined: 当一个方法被undefined的时候执行，undef和remove的区别在于当你在子类中你可以undef掉从父类继承而来的方法，而remove则不可以删除定义在父类中的方法。在父类中无论是使用undef和remove子类都无法继续使用这些方法。
-+ singleton_method_undefined: 当一个singleton方法被undefined时刻执行。
-
-### Class/Object相关
-+ inherited: 当被继承时执行。
-+ initialize_copy: 当调用initialize_clone和initialize_dup时执行。
-+ initialize_dup: 当调用dup，返回dup结果前时执行。
-+ initialize_clone: 当调用clone，进行frozen判断和返回clone结果之前执行。
-
-### Modules相关
-+ included: 当include时执行。
-+ append_features: 当include时执行。
-+ prepended: 2.0新增prepend的时候执行。
-+ prepend_features：跟上面的append_feature可以一同理解。
-+ extend_object: 当被extend时执行。
-+ extended: 当被extend时执行。
-const_missing: 当有常量丢失时执行。
-
-### ActiveSupport Callbacks
-```ruby
-ActiveSupport::Callbacks
-[:run_callbacks]
-ActiveSupport::Callbacks::ClassMethods
-[:define_callbacks,:reset_callbacks,:set_callback,:skip_callback]
-```
-
-
 ## Numeric step
 ```ruby
 0.step(to: 10, by: 2) {|index| puts index}

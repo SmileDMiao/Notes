@@ -7,6 +7,7 @@ nginx -s (stop,quit,reopen,reload)
 Mac上的日志默认写的是 logs／error.log logs/access.log  logs/nginx.pid，真实的目录位置在 /usr/local/Cellar/nginx/1.10.3/ (--prefix lcoation)
 默认没有logs文件夹，还需要自己建立文件夹
 
+---
 ## nginx监听端口无权限问题
 一般rails服务，nginx都是监听的一个socket文件，但前两天和之前同事过来找我玩，遇到一个问题，在nginx下监听一个服务端口，发现总是不起作用，访问直接报错，查看日志显示：nginx没有访问那个端口的权限。
 排除问题测试结果如下：
@@ -23,3 +24,19 @@ Mac上的日志默认写的是 logs／error.log logs/access.log  logs/nginx.pid�
 ```
 具体的解释可以[参见](https://www.nginx.com/blog/nginx-se-linux-changes-upgrading-rhel-6-6/
 )：和之前的猜测基本一致。
+
+---
+## alias和root区别
+root与alias主要区别在于nginx如何解释location后面的uri，这会使两者分别以不同的方式将请求映射到服务器文件上。
+alias是一个目录别名的定义（仅能用于location上下文），root则是最上层目录的定义
+```shell
+# 当请求host/123/abc/logo.png时, 返回服务器上的 /data/www/123/abc/logo.png文件，即/data/www+/123/abc/
+location ^~ /123/abc/ {
+  root /data/www;
+}
+
+# 当请求host/123/abc/logo.png时, 返回服务器上的 /data/www/logo.png文件，即/data/www
+location ^~ /123/abc/ {
+  alias /data/www;
+}
+```

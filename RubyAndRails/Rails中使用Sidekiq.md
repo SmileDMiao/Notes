@@ -109,8 +109,11 @@ gem 'sidekiq-grouping'
 gem 'sidekiq-scheduler'
 # 记录Job的状态
 gem 'sidekiq-status'
+gem 'activejob-status'
 # Ensure uniqueness of your Sidekiq jobs
 gem 'sidekiq-unique-jobs'
+# 统计
+sidekiq-statistic
 ```
 
 ### Sidekiq Scheduler
@@ -142,3 +145,18 @@ module Sidekiq
   end
 end
 ```
+
+## Sidekiq Uniq Job
+#### LOCKS
+1. Until Executing: 推送job加锁, 执行时不加锁
+2. Until Executed: 推送job时加锁, 成功执行后释放
+3. Until Expired: 推送job时加锁, 到达过期时间释放
+4. Until And While Executing: 推送job时加锁, 运行时释放, job运行时创建一个运行时锁
+5. While Executing: 推送随便推, 运行时队列pop, 后面运行的得等待前面的完成
+
+#### Conflict Strategy
+1. log:  目的是用在 UntilExecuted 和 UntilExpired, 记录日志
+2. raise: 目的是用在 WhileExecuting, 报异常
+3. reject: WhileExecuting, 冲突时推到 dead queue
+4. replace: UntilExecuted, 删除当前job所有记录然后重新加锁
+5. reschedule: WhileExecuting, 推迟job, 5秒后再试  

@@ -1,3 +1,9 @@
+## PostgreSQL扫描方式
+1. seq scan: 全表扫描
+2. index scan: 索引扫描(需要回表)
+3. index only scan: 索引扫描(通过VM减少回表 大多数情况下不需要回表)
+4. bitmap scan: 先扫索引. 然后按HEAP BLOCK ID扫描HEAP BLOCK. 输出整个数据块的数据. 因此需要recheck。
+
 ## EXPLAIN AND ANALYZE
 ```sql
 EXPLAIN: 查看sql的执行计划

@@ -50,7 +50,7 @@ oid, osn FROM(
 WHERE p_search.document @@ to_tsquery('123456 & miao')
 ```
 
-## SETWEIGHT
+## SET WEIGHT
 ```sql
 -- SETWEIGHT设置权重
 SELECT

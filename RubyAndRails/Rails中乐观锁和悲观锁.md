@@ -75,6 +75,7 @@ p2.save
 ```
 
 在Postgresql中可以设置事物隔离级别来实现(PG的MVCC实现可以代替乐观锁 :repeatable_read,但是Mysql的事物隔离级别和PG不同，Mysql的不可以实现乐观锁的功能)
+嵌套事务不适用
 ```ruby
 # postgresql中的乐观锁
 Comment.transaction isolation: :repeatable_read do

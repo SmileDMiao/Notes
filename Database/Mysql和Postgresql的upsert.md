@@ -53,5 +53,4 @@ Book.import books.to_a, :on_duplicate_key_update => [:name]
 3. activerecord-import,activerecord-bulkwrite:
 这些gem没有使用数据库层面的存储过程，需要数据库支持upsert的操作，高版本的pg和mysql都有支持，在使用的时候由于使用rails的model，在rails中一般created_at，updated_at是默认必填的，而在upsert时，这两个字段是必填的，哪怕数据库中已经存在了同样的数据。
 
-
-参考[Bulk Upsert for MySQL & PostgreSQL](https://ruby-china.org/topics/32424)
+### 新版本的 Rails 已经原生支持 upsert

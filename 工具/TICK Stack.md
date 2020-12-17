@@ -1,4 +1,4 @@
-# [InfluxDB](https://docs.influxdata.com/influxdb):时序数据库
+# InfluxDB:时序数据库
 ## 安装
 ```shell
 brew install influxdb
