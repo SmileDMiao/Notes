@@ -65,10 +65,11 @@ highlight Folded  guibg=#0A0A0A guifg=#9090D0
 ---
 ### 快捷键
 dd：删除一行
-G： 行底
+G: 行底
 gg: 第一行
 shfit 4 行尾
 shift 6 行首
+set nu/nonu: 是否显示行号
 
 剪切:
 1. 定位鼠标到剪切的开始位置
