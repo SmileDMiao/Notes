@@ -1,5 +1,9 @@
-```go
-// 15 three sum
+// 15. three sum
+// question
+// 在数组中找到三个数的和为0的子数组
+// example
+// Input: [-1, 0, 1, 2, -1, -4] Output: [-1, 0 ,1] [-1, -1, 2]
+
 package main
 
 import (
@@ -53,4 +57,3 @@ func main() {
 	s := threeSum(a)
 	fmt.Println(s)
 }
-```
