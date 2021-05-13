@@ -1,3 +1,13 @@
+// 337. House Robber III
+
+// 现在房屋排列变成了二叉树, 相邻节点不能偷
+
+// 1. 每个节点有偷与不偷的选项
+// 2. 偷: root.val + dp(root.right.left) + dp(root.right.right) + dp(root.left.right) + dp(root.left.left)
+// 3. 不偷: dp(root.right) + dp(root.left)
+
+// TODO
+
 package main
 
 import "fmt"
@@ -22,6 +32,7 @@ func rob(root *TreeNode) int {
 	if v, ok := result[root]; ok {
 		return v
 	}
+
 	do := root.Val
 	if root.Right != nil {
 		do += rob(root.Right.Left) + rob(root.Right.Right)

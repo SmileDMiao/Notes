@@ -4,6 +4,8 @@
 // example
 // Input: haystack = "hello", needle = "ll", Output: 2
 
+package main
+
 func strStr(haystack string, needle string) int {
 	if len(needle) == 0 {
 		return 0

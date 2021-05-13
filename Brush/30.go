@@ -4,19 +4,21 @@
 // example
 // Input: s = "barfoothefoobarman", words = ["foo","bar"], Output: [0,9]
 
+// 思路
+// 遍历string, 截取数组所有元素长度的string，按照数组单个元素的长度分割string，比较截取的数组和words是否相等
+
 package main
 
 import (
-	"fmt"
 	"reflect"
 	"sort"
 	"strings"
 )
 
 func findSubstring(s string, words []string) []int {
+	// 所有元素组成string
 	word := strings.Join(words[:], "")
 
-	fmt.Println(word)
 	size := len(word)
 	var result []int
 	if len(s) == 0 || len(words) == 0 {

@@ -7,6 +7,7 @@
 // 思路(一次循环)
 // 设 first second都是原链表, 遍历first, 当遍历到节点数 > n的时候，
 // 开始移动second,first second两个指针的距离是n那么遍历结束，second就位于倒数第N个节点
+
 package main
 
 type ListNode struct {

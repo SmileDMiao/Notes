@@ -12,6 +12,8 @@
 // 合法则去掉stack最后一个
 // 最后看stack长度是否为0
 
+package main
+
 func isValid(s string) bool {
 	parentMap := map[rune]rune{
 		']': '[',
