@@ -6,7 +6,7 @@
 
 // 思路1(map+slice)
 // map保存word与之对应的数量，数组保存所有words(去重了的)然后根据map的value对数组排序
-// TODO
+
 package main
 
 import (

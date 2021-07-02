@@ -5,14 +5,12 @@
 // Input: nums = [1,1,1,2,2,3], k = 2 Output: [1,2]
 
 // 思路1(map+slice)
-// map保存数字与之对应的数量，数组保存map所有的key，然后根据map的value对数组排序
+// map保存数字与之对应的数量，数组保存map所有的key，然后根据map的value对数组排序, 获取数组的前k个元素
 
-// TODO
 package main
 
 import (
 	"container/heap"
-	"fmt"
 	"sort"
 )
 
@@ -35,13 +33,12 @@ func topKFrequent1(nums []int, k int) []int {
 	return keys[0:k]
 }
 
+// 思路2(堆)
 type KMaxHeap [][]int
 
 func (h KMaxHeap) Len() int           { return len(h) }
 func (h KMaxHeap) Less(i, j int) bool { return h[i][0] > h[j][0] }
-func (h KMaxHeap) Swap(i, j int) {
-	h[i], h[j] = h[j], h[i]
-}
+func (h KMaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 
 func (h *KMaxHeap) Push(x interface{}) {
 	*h = append(*h, x.([]int))
@@ -63,22 +60,13 @@ func topKFrequent2(nums []int, k int) []int {
 	result := []int{}
 	for k, v := range frequency {
 		heap.Push(h, []int{v, k})
-		if h.Len() > k {
-			heap.Pop(h)
-		}
 	}
 
-	val := heap.Pop(h)
+	for i := 0; i < k; i++ {
+		val := heap.Pop(h).([]int)
+		result = append(result, val[1])
+	}
 
-	fmt.Println(val)
-
-	// for i := 0; i < k; i++ {
-	// 	val := heap.Pop(h)
-	// 	// result = append(result, va)
-	// 	fmt.Println(val)
-	// }
-
-	fmt.Println(result)
 	return result
 }
 

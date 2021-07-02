@@ -4,7 +4,9 @@
 // example
 // Input: nums = [3,2,1,6,0,5], Output: [6,3,5,null,2,0,null,null,1]
 
-// TODO
+// 思路
+// 递归创建，找到数组的max and index, 以max创建节点，然后分别递归调用max的左右子数组创建左右节点
+
 package main
 
 import "fmt"
