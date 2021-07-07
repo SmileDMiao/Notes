@@ -7,8 +7,6 @@
 // 2. 偷: root.val + dp(root.right.left) + dp(root.right.right) + dp(root.left.right) + dp(root.left.left)
 // 3. 不偷: dp(root.right) + dp(root.left)
 
-// TODO
-
 package main
 
 import "fmt"
@@ -30,11 +28,14 @@ func rob(root *TreeNode) int {
 		return 0
 	}
 
+	// 查看当前节点有没有偷过
 	if v, ok := result[root]; ok {
 		return v
 	}
 
 	do := root.Val
+
+	// 当前节点偷
 	if root.Right != nil {
 		do += rob(root.Right.Left) + rob(root.Right.Right)
 	}
@@ -42,10 +43,13 @@ func rob(root *TreeNode) int {
 		do += rob(root.Left.Left) + rob(root.Left.Right)
 	}
 
+	// 当前节点不偷
 	not := rob(root.Left) + rob(root.Right)
 
+	// 偷与不偷取大的那个
 	s := max(do, not)
 
+	// 存储节点是否有没有偷
 	result[root] = s
 	return s
 }
