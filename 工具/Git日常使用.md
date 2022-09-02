@@ -1,4 +1,5 @@
 ## Git安装：
+---
 ```shell
 sudo apt-get install git
 yum install git
@@ -7,8 +8,8 @@ git config --global core.editor "vim"
 git config log.date iso-local
 ```
 
----
 ## 工作区和缓存区
+---
 就是你在电脑里能看到的目录，比如这里的GitHub文件夹就是一个工作区。
 ![IMAGE](resources/24497EAA269E6429B31ACC3F0A307391.jpg =546x258)
 工作区有一个隐藏目录.git，这个不算工作区，而是 Git 的版本库。
@@ -18,8 +19,9 @@ Git 的版本库里存了很多东西，其中最重要的就是称为 stage（�
 第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。
 因为我们创建 Git 版本库时，Git 自动为我们创建了唯一一个 master 分支，所以，现在，git commit就是往 master 分支上提交更改。
 
----
+
 ## Git基本命令
+---
 **初始化，添加，提交，推送**
 ```shell
 git init :将这个目录变成git可以管理的仓库。
@@ -88,6 +90,8 @@ git stash pop :恢复的同时把 stash 内容也删了。默认是最新一个s
 git stash pop stash@{x} :恢复制定的stash并删除 
 git stash drop :删除备份
 git stash show -p stash@{x} :查看指定stash的修改内容
+git stash push path :stash单个文件
+git stash branch branch-name stash@{1} :从stash处切出新分支(默认最新stash)
 ```
 
 **撤销修改:这里注意命令 git reset --hard, --mixed, --soft 之间的区别**
@@ -108,6 +112,7 @@ git diff --cached ：暂存区与commit
 git diff HEAD :工作区与commit
 git diff commit_id file_name :查看某个文件的更改
 git diff branch1 branch2 filename :两个分支的某个文件区别
+git diff branch1 branch2 --stat :查看两个分支有哪些文件差异
 ```
 
 **远程相关**
@@ -163,39 +168,50 @@ git push origin <tagname> :推送某个标签到远程
 要看看是否真的从远程库删除了标签，可以登陆 GitHub 查看
 ```
 
----
+
 ## 忽略文件
+---
 不想将某个文件加入版本控制中，可以在项目根目录下新建一个名为 .gitignore 的文件
 
----
+
 ## github设置项目语言
+---
 rails项目自然最好被github识别weiruby项目，但是若html和css过多则会被识别html
 ```shell
 # gitattributes设置项目语言
 *.html linguist-language=JavaScript
 ```
 
----
+
 ## Git配置
+---
 ```shell
 # 默认 editor
 git config --global core.editor /usr/bin/vim
 ```
 ## Git ignore文件中添加了某文件，但是 git status 还是出现了改文件
+---
 ```shell
 git rm --cached file
 git commit
 ```
 
----
+
 ## Git Submodule
+---
 ```shell
 git submodule add submodule_url
 git submodule init
 git submodule update
 ```
 
----
+
 ## 相关工具
+---
 1. tig
 2. git-extras
+
+```shell
+// 按提交人查看
+tig --author="miao qingxin"
+```

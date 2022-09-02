@@ -1,5 +1,4 @@
 ## Vundle插件管理
-
 ---
 ### 插件
 1. preservim/nerdtree
@@ -8,8 +7,9 @@
 4. Yggdroot/LeaderF
 5. Shougo/neocomplete.vim
 
----
+
 ### 配置
+---
 ```vim
 " Plugin 配置
 " nerdtree
@@ -62,8 +62,9 @@ highlight NonText guibg=#060606
 highlight Folded  guibg=#0A0A0A guifg=#9090D0
 ```
 
----
+
 ### 快捷键
+---
 dd：删除一行
 G: 行底
 gg: 第一行

@@ -67,5 +67,5 @@ func min(a int, b int) int {
 func main() {
 	coins := []int{5, 7, 8}
 
-	coinChange211111`eeee qqwweqwe(coins, 12)
+	coinChange2(coins, 12)
 }

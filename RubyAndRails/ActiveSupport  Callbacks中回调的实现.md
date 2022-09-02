@@ -1,10 +1,12 @@
 ## AcrtiveSupoort::Callbacks
+---
 callback是运行在object的生命周期上，某个事件点上的hook代码。
 ActiveSupport::Callbacks提供了callback相关的最基本的功能。
 在rails中，activerecord提供的回调，controller中的before_action，activejob中可用的回调都是基于
 ActiveSupport::callback实现的,所以我们在此之前先了解ActiveSupport::Callbacks
 
 ### AcrtiveSupoort::Callbacks的使用
+---
 提供的三个方法:
 + define_callbacks: 定义事件点
 + set_callback: 为事件点安装callback
@@ -48,6 +50,7 @@ saved...
 ```
 
 ## define_callbacks
+---
 define_callbacks方法会定义一个类变量，然后把一个空的callback链赋值给这个类变量。这个变量的值可以被子类继承，一旦该类被继承，子类也会拥有这个callback链
 
 同时在这个方法里会根据name来创建一个run方法以供调用
@@ -72,6 +75,7 @@ end
 ```
 
 ## set_callbacks
+---
 deffin_callbacks定义了一个类属性：_save_callbacks，set_callbacks则是将before, after之类的回调方法push到这个类的回调链中.
 ```ruby
 def set_callback(name, *filter_list, &block)
@@ -92,7 +96,7 @@ end
 ```
 
 ## run_callbacks
-
+---
 ```ruby
 def run_callbacks(kind, &block)
   send "_run_#{kind}_callbacks", &block
@@ -117,6 +121,7 @@ end
 ```
 
 ## ActiveRecord中使用ActiveSupport
+---
 ```ruby
 # DefineCallbacks模块实现了define_callbacks:定义事件set_callbacks:安装事件的功能
 include DefineCallbacks
@@ -141,6 +146,7 @@ def define_model_callbacks(*callbacks)
 end
 
 # 定义方法，设置callbacks，为事件安装回调
+---
 def _define_before_model_callback(klass, callback)
   klass.define_singleton_method("before_#{callback}") do |*args, &block|
     set_callback(:"#{callback}", :before, *args, &block)

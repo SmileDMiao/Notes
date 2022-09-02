@@ -1,4 +1,5 @@
 ### 数据结构
+---
 1. String
 2. Hash
 3. List: 字符串列表,按照插入顺序排序
@@ -9,8 +10,8 @@
 8. Pub/Sub
 9. Redis-Module(BloomFilter RedisSearch Redis-ML Reedis-cell(限流 ))
 
----
 ### 记录一些常用到的命令
+---
 ```shell
 # 管理命令
 # 内存
@@ -53,13 +54,20 @@ scan 0 match pattern count 1000
 
 **List**
 ```shell
-# list size
+# 获取长度
 llen key
 # 原子性地返回并移除存储在 source 的列表的最后一个元素（列表尾部元素）， 并把该元素放入存储在 destination 的列表的第一个元素位置（列表头部）[可靠队列]
 RPOPLPUSH source destination
 # 通过索引获取列表元素
 LINDEX key -1
 LRANGE key -3 -1
+```
+
+**Hash**
+```shell
+HMSET key field1 value1 field2 value2
+HSET key field value
+HGET key field
 ```
 
 **HyperLogLog**
@@ -71,9 +79,10 @@ PFCOUNT login-1 => 6
 PFMERGE login-1-2 login-1 login-2
 ```
 
----
+
 ### Redis事物
-MULTI  EXEC  DISCARD 和 WATCH 是 Redis 事务的基础。
+---
+MULTI  EXEC  DISCARD 和 WATCH UNWATCH是 Redis 事务的基础。
 事务可以一次执行多个命令, 并且带有以下两个重要的保证:
 + 事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。
 + 事务是一个原子操作：事务中的命令要么全部被执行，要么全部都不执行。
@@ -83,25 +92,31 @@ MULTI  EXEC  DISCARD 和 WATCH 是 Redis 事务的基础。
 3. 另一方面， 通过调用 DISCARD ， 客户端可以清空事务队列， 并放弃执行事务。
 4. WATCH 命令可以为 Redis 事务提供 check-and-set （CAS）乐观锁 行为。被 WATCH 的键会被监视，并会发觉这些键是否被改动过了。 如果有至少一个被监视的键在 EXEC 执行之前被修改了， 那么整个事务都会被取消
 5. 至于那些在 EXEC 命令执行之后所产生的错误， 并没有对它们进行特别处理： 即使事务中有某个/某些命令在执行时产生了错误， 事务中的其他命令仍然会继续执行。
+6. UNWATCH 取消 WATCH 命令对所有 key 的监视。
 
----
+
 ### keys and scan
+---
 keys命令可以扫出指定模式的key列表。Redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。scan指令可以无阻塞的提取出指定模式的key列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用keys指令长。但是对于 SCAN 这类增量式迭代命令来说， 因为在对键进行增量式迭代的过程中， 键可能会被修改， 所以增量式迭代命令只能对被返回的元素提供有限的保证 。
 
----
+
 ### 用redis做异步队列
+---
 一般使用list结构作为队列，rpush生产消息，lpop消费消息。当lpop没有消息的时候，要适当sleep一会再重试。或者使用blpop，在没有消息的时候，它会阻塞住直到消息到来。
 
----
+
 ### Pub/Sub
+---
 使用pub/sub主题订阅者模式，可以实现 1:N 的消息队列。在消费者下线的情况下，生产的消息会丢失，得使用专业的消息队列。
 
----
+
 ### Redis延时队列
+---
 使用sortedset，拿时间戳作为score，消息内容作为key调用zadd来生产消息，消费者用zrangebyscore指令获取N秒之前的数据轮询进行处理。
 
----
+
 ### Redis持久化，主从数据交互
+---
 RDB做镜像全量持久化，AOF做增量持久化。可以把RDB理解为一整个表全量的数据，AOF理解为每次操作的日志。
 RDB: 继续提供服务，只有当有人修改当前内存数据时，才去复制被修改的内存页，用于生成快照
 1. RDB:父进程fork子进程去处理保存工作，父进程没有磁盘IO操作。子进程创建后，父子进程共享数据段，父进程继续提供读写服务，写脏的页面数据会逐渐和子进程分离开来。(fork and copy-on-write)
@@ -128,8 +143,12 @@ redis-check-aof --fix
 ```
 
 ### Redis Mode
+---
 #### master-slave:
 ![IMAGE](resources/BDC00442FEA13660EA479B911A16BED5.jpg =410x346)
+读写分离
+容灾恢复
+
 ```shell
 # 以守护进程的方式运行
 daemonize yes
@@ -185,8 +204,9 @@ redis-cli --cluster help
 redis-cli --cluster create 127.0.0.1:6379 127.0.0.1:6380 127.0.0.1:7002 127.0.0.1:6381 --cluster-replicas 1
 ```
 
----
+
 ### Redis的内存回收
+---
 Redis过期策略
 1. 定期删除: 每隔一段时间,扫描Redis中过期key字典,并清除部分过期的key。
 2. 惰性删除: 当访问一个key时,才判断该key是否过期，过期则删除。
@@ -199,8 +219,9 @@ Redis淘汰策略:
 4. 在设置了过期时间的键空间中，随机移除某个 key。
 5. 在设置了过期时间的键空间中，有更早过期时间的 key 优先移除。
 
----
+
 ### 缓存击穿
+---
 缓存击穿表示恶意用户模拟请求很多缓存中不存在的数据，由于缓存中都没有，导致这些请求短时间内直接落在了数据库上，导致数据库异常。
 BloomFilter
 ```shell
@@ -214,7 +235,8 @@ BF.ADD bloomFilter foo
 BF.EXISTS bloomFilter foo
 ```
 
----
+
 ### 缓存雪崩
+---
 缓存在同一时间内大量键过期（失效），接着来的一大波请求瞬间都落在了数据库中导致连接异常。
 我们一般需要在时间上加一个随机值，使得过期时间分散一些。

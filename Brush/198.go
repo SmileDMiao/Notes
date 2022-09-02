@@ -8,7 +8,7 @@
 // 只有两件房子时候取max(m1, m2), 再多一间房子，两种情况: 偷 f(n-2) + m, 不偷 f(n-1)，取最大值
 // f(n) = m1 n == 1
 // f(n) = max(m1, m2) n == 2
-// f(n) = max(f(n - 1), f(n - 2) + Mn)
+// f(n) = max(f(n - 1), f(n - 2) + M)
 
 package main
 

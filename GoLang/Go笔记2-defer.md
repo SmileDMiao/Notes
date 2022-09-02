@@ -1,4 +1,5 @@
 ## 执行顺序
+---
 多个 defer 出现的时候, 它是一个 "栈" 的关系, 也就是先进后出。一个函数中, 写在前面的 defer 会比写在后面的 defer 调用的晚。
 ```go
 // C B A
@@ -22,6 +23,7 @@ func func3() {
 ```
 
 ## 和 return 的顺序
+---
 先 return 后 defer
 ```go
 func deferFunc() int {
@@ -45,6 +47,7 @@ func main() {
 ```
 
 ## 有返回值的情况
+---
 ```go
 // 10: 只要声明函数的返回值变量名称, return之后执行defer, 依然可以修改值
 func returnButDefer() (t int) { 
@@ -70,6 +73,7 @@ func main() {
 ```
 
 ## panic
+---
 ```go
 // 2 1 panic: 3
 // 遇到 panic 时, 遍历 defer 并执行。在执行 defer 过程中: 遇到 recover 则停止 panic, 返回 recover 处继续往下执行。如果没有遇到 recover, 遍历 defer 后, 抛出 panic 信息。
@@ -135,6 +139,7 @@ func main() {
 ```
 
 ## 函数参数包含子函数
+---
 ```go
 // 3 4 2 1
 // 进入斩顺序, 第一个先进, 为了进入先求第二个参数, 同理第二个defer

@@ -2,6 +2,7 @@
 它需要一个响应 call 方法的对象, 接受 env. 返回三元素的数组: 分别是 status code, header, body. 其中 status code 大于等于 100, 小于 600. header 是一个 hash, body 是一个响应 each 方法的数组.
 
 ## 数行代码的Rack示例
+---
 ```ruby
 # Rack::Directory.new('./')就是一个相应call方法的那个对象
 require 'rack'
@@ -18,6 +19,7 @@ Rack::Handler::Thin.run HelloWorld.new, :Port => 9292
 ```
 
 ## Rack Middleware Stack
+---
 ```ruby
 # config.ru
 # 将 body 标签的内容转换为全大写.
@@ -83,6 +85,7 @@ use ToUpper; run Hello.new本质上是完成如下调用 **ToUpper.new(Hello.new
 
 
 ## Rails On Rack
+---
 Rails.application 是 Rails 应用的主 Rack 应用对象,rails server 负责创建 Rack::Server 对象和启动 Web 服务器。
 ```ruby
 Rails::Server.new.tap do |server|
@@ -110,9 +113,7 @@ end
 + config.middleware.insert_after(existing_middleware, new_middleware, args)：在中间件栈里指定现有中间件的后面添加一个中间件。
 + 可以使用 config.middleware.swap 替换中间件栈里的现有中间件：
 
-
-
-
 ## 参考
+---
 https://ruby-china.org/topics/21517
 https://ruby-china.org/topics/24166

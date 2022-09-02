@@ -1,4 +1,5 @@
 ## Start
+---
 ```ruby
 # Gemfile
 gem 'sorbet', :group => :development
@@ -12,6 +13,7 @@ srb tc
 ```
 
 ## Type System
+---
 ```ruby
 # Normal
 sig { params(x: SomeType, y: SomeOtherType).returns(MethodReturnType) }
@@ -45,8 +47,8 @@ end
 
 ```
 
-
 ## File-Level: Strictness Levelss
+---
 ```ruby
 typed: ignore (Sorbet not read this file)
 typed: flase (报告关于语法 常量解析 sig检查到相关错误)

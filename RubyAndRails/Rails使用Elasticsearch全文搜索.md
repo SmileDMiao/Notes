@@ -1,4 +1,5 @@
 ## 安装
+---
 我之前java版本低老是有问题，换到java8就好了，总之按照官方文档来就行了，基本不会出错。
 启动：在elasticsearch住目录中 bin/elasticsearch
 启动多个就是多个节点，port自9200开始递增
@@ -6,6 +7,7 @@ node从0开始递增
 以守护进程运行: bin/elasticsearch -d
 
 ## 概念理解
+---
 在Elasticsearch中存储数据的行为就叫做索引
 索引（名词） 如上文所述，一个索引(index)就像是传统关系数据库中的数据库，它是相关文档存储的地方，index的复数是indices 或indexes。
 索引（动词） 「索引一个文档」表示把一个文档存储到索引（名词）里，以便它可以被检索或者查询。这很像SQL中的INSERT关键字，差别是，如果文档已经存在，新的文档将覆盖旧的文档
@@ -19,8 +21,8 @@ Relational DB -> Databases -> Tables -> Rows -> Columns
 Elasticsearch -> Indices   -> Types  -> Documents -> Fields
 ```
 
-
 ## elasticsearch-rails
+---
 之前使用过PG数据库的全文搜索功能，但本身不支持中文分词，性能上也不是很好，在使用过程中还遇到一些坑，这里使用更为专业的Elasticsearch来做全文搜索。
 
 ### Gemfile
@@ -82,7 +84,8 @@ end
 ```
 
 ## 搜索
-elasticsearch的搜索功能强大，api数量参数同样很多，elasticsearch-rails这个gem提供了单model搜索和
+---
+> elasticsearch的搜索功能强大，api数量参数同样很多，elasticsearch-rails这个gem提供了单model搜索和
 多个model一个搜索的功能，搜索的参数其实两种都差不多，使用默认的很简单，想要复杂的就需要去看elasticsearch的query dsl了。
 这里只记录说明使用到的搜索，并使用多表搜索的方式搜索单表两种都好借鉴。
 
@@ -112,3 +115,19 @@ search_params = {
 # 如果是多model搜索，在搜索的model中设置好index，type，在fields中添加搜索的字段名，在下面添加模型名称
 @result = Elasticsearch::Model.search(search_params, [Article]).page(params[:page])
 ```
+
+## Elasticsearch 7.X移除 Type
+---
+为了方便理解之前说 "索引" 和关系数据库的 "库" 是相似的，"类型"和 "表" 是对等的
+这是一个不正确的对比，导致了不正确的假设。在关系型数据库里,"表"是相互独立的,一个“表”里的列和另外一个“表”的同名列没有关系，互不影响。但在类型里字段不是这样的。
+在一个Elasticsearch索引里，所有不同类型的同名字段内部使用的是同一个lucene字段存储. 比如 `user` 类型的 `user_name` 字段和 `tweet` 类型的` user_name` 字段是存储在一个字段里的，两个类型里的user_name必须有一样的字段定义。
+这可能导致一些问题，你希望同一个索引中"deleted"字段在一个类型里是存储日期值，在另外一个类型里存储布尔值。
+最后,在同一个索引中，存储仅有小部分字段相同或者全部字段都不相同的文档，会导致数据稀疏，影响Lucene有效压缩数据的能力。
+
+## Mapping
+---
+mapping 是用来定义文档及其字段的存储方式、索引方式的手段，比如:
+1. 哪些字段需要被定义为全文检索类型
+2. 哪些字段包含number、date类型等
+3. 格式化时间格式
+4. 自定义规则，用于控制动态添加字段的映射

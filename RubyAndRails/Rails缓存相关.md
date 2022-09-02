@@ -1,9 +1,11 @@
 ## Rails中的缓存
+---
 [参考文档](http://guides.ruby-china.org/caching_with_rails.html)
 
 >可以用Rails.cache.class 查看使用了哪种缓存，如果没有设置的话，Rails.cache.class是ActiveSupport::Cache::FileStore，默认使用文件缓存，位置在/tmp/cache*
 
 ## 设置使用哪种缓存方式
+---
 ```ruby
 # 使用文件缓存,
 config.cache_store = :file_store, Rails.root.join('tmp')
@@ -48,6 +50,7 @@ Rails.cache.read("miao")
 ```
 
 ## 客户端的缓存
+---
 [文档](http://api.rubyonrails.org/classes/ActionController/ConditionalGet.html#method-i-stale-3F)
 
 [Etag](https://ruby-china.org/topics/24996)
@@ -59,6 +62,7 @@ action中代码还是会全部执行，不过内容没有变化的时候，不�
 若你有特定的响应处理，请使用stale?方法；若你没有特定的响应处理，例如你不需要使用respond_to或调用render方法，请使用fresh_when。
 
 ## 片段缓存(套娃缓存)
+---
 这里两篇文章写的很好
 [说说 Rails 的套娃缓存机制](https://ruby-china.org/topics/21488)
 [Redis 实现 Cache 系统实践](https://ruby-china.org/topics/27939)
@@ -80,7 +84,7 @@ def cache(name = {}, options = {}, &block)
   nil
 end
 
-  # 这个方法的作用在于计算缓存key
+# 这个方法的作用在于计算缓存key
 def fragment_name_with_digest(name, virtual_path)
   virtual_path ||= @virtual_path
   if virtual_path
@@ -138,7 +142,7 @@ def read_fragment(key, options = nil)
       result.respond_to?(:html_safe) ? result.html_safe : result
   end
 end
-  # 写入缓存
+# 写入缓存
 def write_fragment(key, content, options = nil)
   return content unless cache_configured?
 
@@ -150,8 +154,8 @@ def write_fragment(key, content, options = nil)
   content
 end
 
-  # 真正执行缓存读取写入的地方在block中
-  # 这里使用ActiveSupport::Notifications发布缓存读取写入的事件，可能是日志订阅了这个事件
+# 真正执行缓存读取写入的地方在block中
+# 这里使用ActiveSupport::Notifications发布缓存读取写入的事件，可能是日志订阅了这个事件
 def instrument_fragment_cache(name, key) # :nodoc:
   payload = instrument_payload(key)
   ActiveSupport::Notifications.instrument("#{name}.#{instrument_name}", payload) { yield }
@@ -159,8 +163,10 @@ end
 ```
 
 ## 注意点：
+---
 1. 避免直接对nil做缓存，添加标示
 2. 在使用套娃缓存的时候注意touch问题
 
 ## 总结
+---
 在使用片段缓存的时候，基本就是计算缓存key，然后在缓存中读取key值，如果读取到，那么就返回读取到内容，如果没有读取到，那么就缓存block中的缓存内容。

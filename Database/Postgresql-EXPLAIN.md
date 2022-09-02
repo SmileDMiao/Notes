@@ -1,4 +1,5 @@
 ## PostgreSQL扫描方式
+---
 1. seq scan: 全表扫描
 2. index scan: 索引扫描(需要回表)
 3. index only scan: 索引扫描(通过VM减少回表 大多数情况下不需要回表)

@@ -1,4 +1,5 @@
 ## TSVECTOR AND TSQUERY
+---
 > to_tsvector() 把一个字符串转换为tsvector一个tsvector是一个标准词位的有序列表(sorted list), 标准词位(distinct lexeme)就是说把同一单词的各种变型体都被标准化相同的。数字表示词位在原始字符串中的位置，比如“man"出现在第6和15的位置上.
 标准化过程几乎总是把大写字母换成小写的, 也经常移除后缀(比如英语中的s,es和ing等) 这样可以搜索同一个字的各种变体,而不是乏味地输入所有可能的变体。
 ```sql
@@ -51,6 +52,7 @@ WHERE p_search.document @@ to_tsquery('123456 & miao')
 ```
 
 ## SET WEIGHT
+---
 ```sql
 -- SETWEIGHT设置权重
 SELECT
@@ -65,18 +67,21 @@ WHERE p_search.document @@ to_tsquery('english', 'Endangered & Species')ORDER BY
 ```
 
 ## TS_RANK
+---
 ```sql
 -- 相关性
 SELECT ts_rank(to_tsvector('This is an example of document'), to_tsquery('example | document')) as relevancy;
 ```
 
 ## 索引
+---
 ```sql
 CREATE INDEX index_article ON post 
 USING gin(setweight(to_tsvector(language, title),'A') || setweight(to_tsvector(language, content), 'B'))
 ```
 
 ## 中文分词
+---
 ```shell
 brew install scws
 git clone https://github.com/amutu/zhparser.git
@@ -92,5 +97,6 @@ ALTER TEXT SEARCH CONFIGURATION parser_name ADD MAPPING FOR n,v,a,i,e,l,j WITH s
 ```
 
 ## Triggers For Automatic Updates
+---
 tsvector_update_trigger
 tsvector_update_trigger_column

@@ -1,4 +1,5 @@
 # InfluxDB:时序数据库
+---
 ## 安装
 ```shell
 brew install influxdb
@@ -72,6 +73,7 @@ a series is the collection of data that share a retention policy, measurement, a
 【相当于数据库中的索引属性】tags are made up of tag keys and tag values. Both tag keys and tag values are stored as strings and record metadata
 
 # Telegraf:数据收集
+---
 ## 安装
 ```shell
 brew install telegraf
@@ -114,12 +116,14 @@ AGGREGATOR PLUGINS
 ```
 
 # Chronograf:图表展示
+---
 ## 安装
 ```shell
 brew install chronograf
 ```
 
 # Kapacitor:事件警告
+---
 ## 安装
 ```shell
 brew install kapacitor

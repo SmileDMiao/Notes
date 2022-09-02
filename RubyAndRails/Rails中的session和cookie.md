@@ -1,4 +1,5 @@
 ## Rails中的cookie
+---
 >cookie本身是http协议的内容
 
 cookie的使用
@@ -45,6 +46,7 @@ end
 真正设置cookie则是由rake的utils.rb中的`add_cookie_to_header(header,key,value)`方法完成
 
 ## Rails中的session
+---
 默认情况下，在rails中session存储在cookie中，由配置
 ```ruby
 Rails.application.config.session_store :cookie_store, key: '_Malzahar'
@@ -59,6 +61,7 @@ the method `csrf_meta_tags` in layout will generate the below html
 ```
 
 ### encrypet process
+---
 ```ruby
  # Sets the token value for the current session.
   AUTHENTICITY_TOKEN_LENGTH = 32
@@ -85,10 +88,12 @@ in html store a encrypet token and store unencrypet token in session
 form表单在提交时会自动带上加密后的token，用来验证。
 
 ### 解密过程
+---
 application_controller中的protect_from_forgery with: :exception
 为action设置了回调.
 主要就是解密加密的token，然后和session中的token做比较.
 真正解密比较的代码在 `actionpack-4.2.6/lib/action_controller/metal/request_forgery_protection.rb #valid_authenticity_token?`
 
 ## 参考
+---
 https://ruby-china.org/topics/35199

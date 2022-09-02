@@ -1,4 +1,5 @@
 ## 求唯一值去重
+---
 ```sql
 create table sex (sex char(1), otherinfo text);    
 create index idx_sex_1 on sex(sex);
@@ -25,6 +26,7 @@ select * from skip where sex is not null;
 ```
 
 ## 求差
+---
 ```sql
 create table a(id int primary key, info text);  
 create table b(id int primary key, aid int, crt_time timestamp);  

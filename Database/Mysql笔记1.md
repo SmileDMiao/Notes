@@ -79,20 +79,70 @@ select * from t_apps where created>'2012-07-02 00:00:00' into outfile /tmp/apps.
 result = client.query('SELECT id, email FROM shopperplus_customers', :stream => true)
 ```
 
-## EXPLAIN
----
-我们经常为表添加索引以方便更快的搜索，但是我经常有疑问，我怎么知道这条sql执行了到底有没有命中索引呢？总不能通过执行时间吧，这个虽然是最直观的，但我希望从数据上有个直观的感受。
-
-**mysql数据库我所知道的一种方式就是通过慢查询日志**
-满查询日志的结果会显示这条sql搜索到多少条结果，总共扫描了多少条数据。
+## 查看数据库大小
 ```sql
--- mysql.conf
-slow_query_log：是否开启慢查询，0或者OFF为关闭，1或者ON为开启，默认值为OFF，即为关闭
-slow_query_log_file：指定慢查询日志存放路径
-long_query_time：大于等于此时间记录慢查询日志，精度可达微秒级别，默认为10s。当设置为0时表示记录所谓查询记录
--- 日志:Query_time: 5.007305 Lock_time: 0.000112 Rows_sent: 5 Rows_examined: 10
-Query_time: 查询花费的总时间
-Lock_time: 等待锁的时间
-Rows_sent: 实际获取的数据行数
-Rows_examined: 实际扫描的数据行数
+use information_schema;
+
+-- 查看各个数据库大小
+SELECT
+	concat(round(sum(DATA_LENGTH / 1024 / 1024), 2), 'MB') AS data
+FROM
+	TABLES;
+
+-- 查看数据库各个表大小
+SELECT
+	table_schema AS '数据库',
+	table_name AS '表名',
+	table_rows AS '记录数',
+	truncate(data_length / 1024 / 1024, 2) AS '数据容量(MB)',
+	truncate(index_length / 1024 / 1024, 2) AS '索引容量(MB)'
+FROM
+	information_schema.tables
+WHERE
+	table_schema = 'irm_prod_sec'
+ORDER BY
+	data_length DESC,
+	index_length DESC;
 ```
+
+## mysqldump 导出 导入
+---
+如果有报错: `Unknown table 'COLUMN_STATISTICS' in information_schema (1109)` 需要加上参数 `--column-statistics=0`
+```shell
+mysqldump -h 10.0.101.20
+          -u root
+          -p irm_prod_sec
+          --ignore-table=irm_prod_sec.sug_product_configs_copy2
+          --ignore-table=irm_prod_sec.sug_product_configs_copy1 
+          --ignore-table=irm_prod_sec.sug_sap_product_config_tmp 
+          --ignore-table=irm_prod_sec.sessions 
+          --ignore-table=irm_prod_sec.irm_events
+          --ignore-table=irm_prod_sec.sug_sap_product_tmp
+          --ignore-table=irm_prod_sec.irm_oauth_tokens
+          --column-statistics=0 verbose=true > database.sql
+          
+mysql -u -p
+show databases;
+use db;
+source path/db.sql
+```
+
+## Mysql忘记密码
+---
+```shell
+cd /usr/local/mysql/bin
+
+./mysqld_safe --skip-grant-tables
+./mysql
+FLUSH PRIVILEGES; 
+ALTER USER 'root'@'localhost' IDENTIFIED BY '你的新密码';
+```
+
+## Mysql从一个很大的表中删除大批量数据
+---
+```sql
+1. create copy table
+2. insert into selet(no need to delete data)
+3. remove original table
+4. rename copy table to original table name
+````

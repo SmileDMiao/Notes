@@ -1,4 +1,5 @@
 ## COALESCE空值处理.
+---
 ```sql
 -- 计算用户的客户数; 用户的客户规则设置数量; 查出客户数>规则数的用户
 -- customer_rules.rules(JSON)
@@ -24,8 +25,9 @@ GROUP BY
 HAVING count(customers.id)::INTEGER <= COALESCE((customer_rules.rules->>'limit')::integer,20)
 ```
 
----
+
 ## DISTINCT ON:实现从每个分组中取最...的一条数据(最近N天没有创建订单的客户)
+---
 ```sql
 -- 查出最近多长时间内(没有orders或者samplings或者quotations)的客户
 -- DISTINCT ON: 查出用户的最新一条单据
@@ -96,8 +98,8 @@ WHERE
 实际比较下来，后一种方式比distinct on略快，cost要小一些
 
 
----
 ## 聚合函数string_agg 和 array_agg json_agg
+---
 ```sql
 CREATE TABLE city(
 	country character varying(64),
@@ -117,8 +119,9 @@ SELECT country,array_agg(city) FROM city GROUP BY country;
 COALESCE(json_agg(json_build_object('dye_vat', vat_num, 'batch_cloth_id', batch_cloths.id)) FILTER (WHERE dye_vats.id IS NOT NULL), '{}') AS dye_vat_strict
 ```
 
----
+
 ## filter子句
+---
 ```sql
 select 
   stu_id, 
@@ -128,14 +131,16 @@ from sherry.agg_filter
 group by stu_id
 ```
 
----
+
 ## order by null放在后面
+---
 ```sql
 order by result DESC NULLS LAST
 ```
 
----
+
 ## Sum not repect columns
+---
 1. user has many turnovers(流水表)
 2. user has many sale_monts(月销售目标表)(1: 100, 2: 200)(只有两条数据)
 3. 计算4，5月的总流水和销售目标
@@ -154,8 +159,9 @@ FROM
 		users.id
 ```
 
----
+
 ## Group by time with day
+---
 1. turnovers: 流水表 | recieve_at(2020-10-01 12:03:45)
 2. 时间是包含时分秒的, 希望以天分组, 计算每天的流水
 3. 流水的日期可能不是连续的, 比如6月5号这边压根没有流水, 但是希望输出连续的日期, 以及每天的流水
@@ -179,8 +185,9 @@ FROM
 			1) pp ON pp.t_time::timestamp = dd::timestamp
 ```
 
----
+
 ## DATE_TRUNC AND AT TIME ZONE
+---
 ```sql
 SELECT
 	accounts_users.id,
@@ -191,4 +198,25 @@ FROM
 	accounts_users
 WHERE
 	accounts_users.id = 1;
+```
+
+ 
+## group having pisition
+---
+多语言表，每个hospital_id有多条记录(中文/英文/繁体)之类的几条记录, 想找到没有英文的医院有哪些
+position: 包含返回index索引位置，不包含返回0
+```sql
+SELECT
+	hospital_id
+FROM
+	hospital_translations
+GROUP BY
+	hospital_id
+HAVING
+	POSITION('en' in string_agg(locale, ',') ) = 0;
+```
+
+## where column != "AUTO" 当column是null的时候筛选不出来
+```sql
+where column != "AUTO" or column is null
 ```

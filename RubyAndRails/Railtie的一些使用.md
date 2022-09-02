@@ -1,8 +1,10 @@
 ## Railtie的一些使用
+---
 > [Railtie](https://api.rubyonrails.org/classes/Rails/Railtie.html) is the core of the Rails Framework and provides several hooks to extend Rails and/or modify the initialization process.
 
 
 ### 添加配置属性
+---
 在config的配置文件中，可以随意添加参数
 ```ruby
 # config/application.rb
@@ -42,6 +44,7 @@ end
 之后就可以通过 *Rails.application.config.fwk.xxx* 来获取自定义的相关配置
 
 ### RakeTask And Generator
+---
 ```ruby
 # lib/fkw/railtie.rb
 # 在lib目录下按照标准写会替换rails的原生generator,这里可以通过 *send(:include)之类的方式打开类来扩展rails原生的generator

@@ -1,4 +1,5 @@
 ## 悲观锁
+---
 悲观锁在使用时采用比较保守的策略，当锁住的时候，其他人无法修改锁住的记录，在事务开始之前获取写的权限，事务结束之后释放，在资源竞争比较激烈的时候适用。
 rails 有两种方式
 ```ruby
@@ -39,6 +40,7 @@ ROLLBACK;
 ```
 
 ## 乐观锁
+---
 在事务提交之前，大家都可以提交自己的数据，但是在提交的时候发现数据有改变，则拒绝提交
 需要给表加上lock_version字段
 由于Mysql和PG的MVCC实现的不同，Mysql的事务隔离级别并不能实现乐观锁的功能，所以Mysql需要手动管理lock_version
@@ -75,6 +77,7 @@ p2.save
 ```
 
 在Postgresql中可以设置事物隔离级别来实现(PG的MVCC实现可以代替乐观锁 :repeatable_read,但是Mysql的事物隔离级别和PG不同，Mysql的不可以实现乐观锁的功能)
+pg 的记录有隐藏版本字段, 在 select 的时候, transaction 不锁定记录, 但是会记下记录的版本, 然后在 update 的时候比较版本. 说白了就是乐观锁
 嵌套事务不适用
 ```ruby
 # postgresql中的乐观锁
@@ -87,6 +90,7 @@ end
 对于乐观锁，还需要注意如果是前端操作频繁，那么还需要把 lock_version 写入到 form 表单中，否则起不到锁的作用
 
 ## 嵌套事物死锁
+---
 ```ruby
 ActiveRecord::Base.transaction do
   a = User.find(1)
@@ -106,5 +110,6 @@ end
 ![IMAGE](resources/579E22309832D6764486AD33AB7907E6.jpg =657x377)
 
 ## 参考
+---
 https://ruby-china.org/topics/28963
 https://ruby-china.org/topics/19499

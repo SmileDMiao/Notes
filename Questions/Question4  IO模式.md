@@ -1,4 +1,5 @@
 ## 说明
+---
 对 32 位操作系统而言，它的寻址空间（虚拟存储空间）为 4G（2 的 32 次方）。
 核空间：在 liunx 中，将最高的 1G 字节（从虚拟地址 0xC0000000 到 0xFFFFFFFF），供内核使用，称为 “内核空间”。
 用户空间: 在 liunx 中，将较低的 3G 字节（从虚拟地址 0x00000000 到 0xBFFFFFFF），供各个进程使用，称为 “用户空间）。
@@ -21,6 +22,7 @@
 可以理解成一个比较耗资源的过程。
 
 ## IO模式
+---
 1. 阻塞IO/blocking io
 2. 非阻塞IO/noblocking io
 3. IO多路复用/io multiplexing(select poll epoll)
@@ -42,6 +44,7 @@
 
 
 ## select poll epoll
+---
 select的几大缺点:
 1. 每次调用select，都需要把fd集合从用户态拷贝到内核态，这个开销在fd很多时会很大
 2. 同时每次调用select都需要在内核遍历传递进来的所有fd，这个开销在fd很多时也很大

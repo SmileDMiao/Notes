@@ -13,11 +13,6 @@ Go语言的CSP模型是由协程Goroutine与通道Channel实现：
 ---
 要想解决临界资源安全的问题, 很多编程语言的解决方案都是同步。通过上锁的方式，某一时间段, 只能允许一个goroutine来访问这个共享数据, 当前goroutine访问完毕, 解锁后, 其他的goroutine才能来访问。
 
-### sync锁
-1. waitGroup
-2. 互斥锁
-3. 读写锁
-
 ### channel:
 通道可以被认为是Goroutines通信的管道。类似于管道中的水从一端到另一端的流动, 数据可以从一端发送到另一端，通过通道接收。
 当多个Goroutine想实现共享数据的时候, 虽然也提供了传统的同步机制, 但是Go语言强烈建议的是使用Channel通道来实现Goroutines之间的通信。

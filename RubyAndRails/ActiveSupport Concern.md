@@ -1,4 +1,5 @@
 ## ActiveSupport Concern
+---
 为什么我们需要？
 类包含模块后可以获得实例方法和类方法。
 **concern模块出现之前**

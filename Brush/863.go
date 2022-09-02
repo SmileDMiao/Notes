@@ -18,7 +18,7 @@ type TreeNode struct {
 	Right *TreeNode
 }
 
-func distanceK(root *TreeNode, target *TreeNode, K int) []int {
+func distanceK1(root *TreeNode, target *TreeNode, K int) []int {
 	// 结果
 	result := make([]int, 0)
 
@@ -110,7 +110,7 @@ func main() {
 // map存储了每个节点的父节点
 var parents map[*TreeNode]*TreeNode
 
-func distanceK(root *TreeNode, target *TreeNode, K int) []int {
+func distanceK2(root *TreeNode, target *TreeNode, K int) []int {
 	parents = make(map[*TreeNode]*TreeNode)
 
 	// 初始化一个数组，里面只有target节点

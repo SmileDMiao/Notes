@@ -1,4 +1,5 @@
 ## 利用pg数据库做全文搜索
+---
 [PostgreSQL 的全文检索系统之中文支持](https://www.rails365.net/articles/postgresql-de-quan-wen-jian-suo-xi-tong-zhi-zhong-wen-zhi-chi-san)
 
 由于pg自带的全文搜索不支持中文分词，所以需要做一些准备工作：
@@ -20,6 +21,7 @@
 * 上面要做的完成之后就可以利用pg_search来完成全文搜索的实现了。
 
 ## pg_search 两种方式-单表搜索
+---
 pg_search的github上的文档介绍的还是很详细的，仔细看完照着测试基本没有问题，这里只是记录一个基本用法,以及一些参数的含义。
 更详细用法[参见](https://github.com/Casecommons/pg_search)
 ```ruby
@@ -42,6 +44,7 @@ pg_search_scope :chinese_search,                  #搜索方法名称,使用时m
 ```
 
 ## pg_search 两种方式-多表搜索
+---
 创建文档表
 ```ruby
 $ rails g pg_search:migration:multisearch

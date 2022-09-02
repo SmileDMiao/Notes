@@ -1,4 +1,5 @@
 ## Actioncable的一些概念理解
+---
 + channel.rb: 用于封装共享逻辑
 + connection.rb: 负责连接的类，完成对连接的授权
 + ../chat_channel.rb: 自己创建的频道类。
@@ -39,6 +40,7 @@ end
 ```
 
 ## 利用Actioncable完成一个聊天的功能
+---
 ```js
 received: (data) ->
   # 收到消息，现实聊天内容
@@ -87,10 +89,12 @@ end
 ```
 
 ## 关于websocket
+---
 WebSocket协议是基于TCP的一种新的网络协议。它实现了浏览器与服务器全双工(full-duplex)通信——允许服务器主动发送信息给客户端。
 它的原理是这样的，由于它是一个协议，它不用发送跟http同样多的头信息，它比较轻量，速度快。为了建立一个 WebSocket 连接，客户端浏览器首先要向服务器发起一个 HTTP 请求，这个请求和通常的 HTTP 请求不同，包含了一些附加头信息，其中附加头信息”Upgrade: WebSocket”表明这是一个申请协议升级的 HTTP 请求，服务器端解析这些附加的头信息然后产生应答信息返回给客户端，客户端和服务器端的 WebSocket 连接就建立起来了，双方就可以通过这个连接通道自由的传递信息，并且这个连接会持续存在直到客户端或者服务器端的某一方主动的关闭连接。
 
 ## 关于adapter
+---
 默认rails的actioncable使用redis作为adapter
 ```ruby
 # gem Tubesock:对rack hijack的封装,关于hijack下面说
@@ -121,6 +125,7 @@ Redis publish的作用是向这个频道里广播消息，由于redis实现了pu
 浏览器A -> server -> redis -> server -> 浏览器ABC
 
 ## Actioncable设置
+---
 访问设置：
 Actioncable默认只使用3000端口，如果想要使用其他端口:
 ```ruby

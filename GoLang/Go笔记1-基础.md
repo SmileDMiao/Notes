@@ -48,7 +48,7 @@
 + make: 分配内存，返回Type本身(只能应用于slice map channel)
 + new: 分配内存, 主要用来分配值类型, 比如 int struct, 返回指向Type的指针
 + cap: 返回某个类型的最大容量（只能用于切片和 map）
-+ copy: 制和连接slice, 返回复制的数目
++ copy: 复制和连接slice, 返回复制的数目
 + len: 求长度, 比如string array slice map channel
 + print&println: 底层打印函数，在部署环境中建议使用 fmt 包
     

@@ -164,6 +164,14 @@ create table test(
 )
 insert into articles select id, substring(md5(random()::text),1,8), md5(random()::text), 0, null, null, 0, '{}', '{}', clock_timestamp(), clock_timestamp() from generate_series(1, 10) id;
 
+-- 随机数字
+-- 0-1
+SELECT random();
+-- 1-10
+SELECT random() * 10 + 1 AS RAND_1_10;
+-- 随机整数(1-10)
+floor(random() * 10 + 1)
+
 -- 可以通过这种方式生成一个随机字符串 
 substring(md5(random()::text),1,8)
 

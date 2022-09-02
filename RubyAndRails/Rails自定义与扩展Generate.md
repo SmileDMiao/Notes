@@ -1,9 +1,11 @@
 ## Thor Rails generate生成器之自定义生成器
+---
 >需求1: rails项目主目录下有个文件夹叫 *modules*， 里面有好多文件夹，每个文件夹的结构个rails项目很像，也有app(controller,views,model),config,lib..,
 需要写一个 *generate生成器* 来生成modules下的这么一个文件夹结构，比如 *rails generate module=cmi*
 参考：http://guides.ruby-china.org/generators.html
 
 ### 生成生成器
+---
 ```shell
 # rails generate 提供的生成 生成器 的命令
 rails generate generator module
@@ -19,6 +21,7 @@ create  lib/generators/module/templates
 ```
 
 ### 自定义生成器
+---
 ```ruby
 class ModuleGenerator < Rails::Generators::NamedBase
   source_root File.expand_path('../templates', __FILE__)
@@ -53,10 +56,12 @@ end
 ```
 
 ## Thor Rails generate生成器之扩展原生生成器
+---
 >需求2: example: rails generate controller xxx 会在app/controller下生成文件，现在需要给这个系列命令添加一个参数 --module=xxx,
 添加这个参数之后就会在modules文件夹下的指定文件夹添加controller文件。
 
 ### generate command extend
+---
 >这样rails generate 就支持 --module选项了.
 
 ```ruby
@@ -94,6 +99,7 @@ end
 ```
 
 ### controller command expand
+---
 > rails g controller 将在指定的module文件夹下的对应位置生成文件
 
 ```ruby
@@ -124,6 +130,7 @@ end
 ```
 
 ### migration command expand
+---
 > rails g migration 文件位置发生相同模式的改变
 
 ```ruby
@@ -138,6 +145,7 @@ end
 ```
 
 ### model command expand
+---
 > rails g model model和migration的文件位置发生相同模式的改变
 
 ```ruby
@@ -152,6 +160,7 @@ end
 ```
 
 ## 扩展rails 脚手架
+---
 >需求3: example: rails g scaffold HighScore name:string --module=irm，执行之后，按照上面的规则，将对应的文件添加到modules对应文件夹下，并添加一些必要的模板文件，简而言之就是
 让rails g scaffold 这个命令支持--module选项
 
@@ -172,6 +181,7 @@ protected
 ```
 
 ### 添加模板文件
+---
 ```ruby
 # lib/templates/erb/scaffold/new.html.erb
 # 这里可以参考一下源码:lib/templates/rails/scaffold_controller/controller.rb
@@ -192,5 +202,6 @@ end
 ```
 
 ## 总结
+---
 1. 这里的方式是完全替换原来相应的generator
 2. 另一种方式: 通过打开类的方式，send(:include),也可以实现功能，不过这种方式代码不好组织，但这种方式是覆盖而非替换.
