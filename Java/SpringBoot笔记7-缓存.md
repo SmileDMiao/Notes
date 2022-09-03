@@ -88,13 +88,66 @@ public class CustomerDataService {
     public String getAddress(Customer customer) {...}
 ```
 
-### 不支持设置过期时间怎么办?
+## 不支持设置过期时间怎么办?
+---
 ```java
+public class RedisConfig extends CachingConfigurerSupport {
 
+    @Primary
+    @Bean
+    public RedisCacheManager ttlCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        return new TtlRedisCacheManager(RedisCacheWriter.lockingRedisCacheWriter(redisConnectionFactory),
+                this.getRedisCacheConfigurationWithTtl(60));
+    }
 
+    private RedisCacheConfiguration getRedisCacheConfigurationWithTtl(Integer seconds) {
+        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig();
+        redisCacheConfiguration = redisCacheConfiguration.serializeValuesWith(
+                        RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer())).
+                entryTtl(Duration.ofSeconds(seconds));
+
+        return redisCacheConfiguration;
+
+    }
+}
+```
+
+```java
+public class TtlRedisCacheManager extends RedisCacheManager {
+    public TtlRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
+        super(cacheWriter, defaultCacheConfiguration);
+    }
+
+    @Override
+    protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
+        String[] cells = StringUtils.delimitedListToStringArray(name, "=");
+        String cacheName = cells[0];
+        if (cells.length > 1) {
+            long ttl = Long.parseLong(cells[1]);
+            // 根据传参设置缓存失效时间
+            cacheConfig = cacheConfig.entryTtl(Duration.ofSeconds(ttl));
+        }
+        return super.createRedisCache(cacheName, cacheConfig);
+    }
+}
+```
+
+```java
+@Cacheable("userByName=86400")
+List<User> findByUsernameLike(String name);
 ```
 
 
 ### 序列化
 ```java
+@Bean
+public RedisSerializer<Object> redisSerializer() {
+    // 创建JSON序列化器
+    Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+    ObjectMapper om = new ObjectMapper();
+    om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+    jackson2JsonRedisSerializer.setObjectMapper(om);
+
+    return jackson2JsonRedisSerializer;
+}
 ```

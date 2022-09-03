@@ -1,6 +1,0 @@
-{
-  "go.toolsEnvVars": {
-    "GOMODCACHE": "/Users/themadeknight/.gvm/pkgsets/go1.19/global/pkg/mod",
-    "GOENV": "/Users/themadeknight/Library/Application Support/go/env"
-  }
-}

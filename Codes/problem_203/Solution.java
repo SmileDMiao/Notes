@@ -3,7 +3,7 @@ package problem_203;
 import java.util.Arrays;
 import java.util.List;
 
-import strustures.ListNode;
+import structures.ListNode;
 
 class Solution {
   public ListNode removeElements(ListNode head, int val) {

@@ -3,7 +3,7 @@ package problem_2;
 import java.util.Arrays;
 import java.util.List;
 
-import strustures.ListNode;
+import structures.ListNode;
 
 class Solution {
   public ListNode addTwoNumbers(ListNode l1, ListNode l2) {

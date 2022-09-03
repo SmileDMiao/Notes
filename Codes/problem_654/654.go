@@ -4,10 +4,14 @@ import (
 	"LeetCode/structures"
 )
 
-type TreeNode structures.TreeNode
+type TreeNode = structures.TreeNode
 
-func constructMaximumBinaryTree(nums []int) *structures.TreeNode {
-	if nums == nil || len(nums) == 0 {
+func constructMaximumBinaryTree(nums []int) *TreeNode {
+	if nums == nil {
+		return nil
+	}
+
+	if len(nums) == 0 {
 		return nil
 	}
 
@@ -20,7 +24,7 @@ func constructMaximumBinaryTree(nums []int) *structures.TreeNode {
 		}
 	}
 
-	root := &structures.TreeNode{max, nil, nil}
+	root := &TreeNode{Val: max, Left: nil, Right: nil}
 
 	root.Left = constructMaximumBinaryTree(nums[0:index])
 	root.Right = constructMaximumBinaryTree(nums[(index + 1):])

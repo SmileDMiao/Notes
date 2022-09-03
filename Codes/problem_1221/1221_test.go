@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_Problem1(t *testing.T) {
+func Test_Problem1221(t *testing.T) {
 	balanceString := "RLRRLLRLRL"
 
 	fmt.Println(balancedStringSplit(balanceString))

@@ -7,10 +7,10 @@ import (
 )
 
 func createNode(value int) *TreeNode {
-	return &structures.TreeNode{value, nil, nil}
+	return &structures.TreeNode{Val: value, Left: nil, Right: nil}
 }
 
-func Test_Problem1(t *testing.T) {
+func Test_Problem1302(t *testing.T) {
 	root := createNode(6)
 	root.Left = createNode(7)
 	root.Left.Left = createNode(2)
